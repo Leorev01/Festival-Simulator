@@ -2,6 +2,7 @@ import AmenitySelector from '../features/festival/AmenitySelector';
 import ArtistSelector from '../features/festival/ArtistSelector';
 import StageSelector from '../features/festival/StageSelector';
 import SummaryPanel from '../features/festival/SummaryPanel';
+import SimulationPanel from '../features/simulation/SimulationPanel';
 
 export default function FestivalBuilder() {
   return (
@@ -12,6 +13,7 @@ export default function FestivalBuilder() {
           <ArtistSelector />
           <StageSelector />
           <AmenitySelector />
+          <SimulationPanel />
         </div>
         <SummaryPanel />
       </div>

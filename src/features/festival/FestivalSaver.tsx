@@ -14,6 +14,12 @@ export default function FestivalSaver() {
     }
   };
 
+  const handleDelete = (index: number) => {
+  const updated = saved.filter((_: any, i: number) => i !== index);
+  setSaved(updated);
+  localStorage.setItem('saved-festivals', JSON.stringify(updated));
+};
+
   const exportToFile = (festival: any) => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(festival, null, 2));
     const downloadAnchorNode = document.createElement('a');
@@ -57,6 +63,7 @@ export default function FestivalSaver() {
             <div className="flex gap-3 text-xs">
               <button className="text-blue-600 hover:underline" onClick={() => exportToFile(f)}>Export</button>
               <button className="text-green-600 hover:underline" onClick={() => loadFestival(f)}>Load</button>
+              <button className="text-red-600 hover:underline" onClick={() => handleDelete(i)}>Delete</button>
             </div>
           </li>
         ))}

@@ -24,16 +24,27 @@ export default function SummaryPanel() {
   const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
-      <h2 className="text-3xl font-bold text-indigo-700 mb-2">📊 Festival Summary</h2>
-      <div className="space-y-1 text-sm text-gray-700">
-        <p><strong>Artists Selected:</strong> {artists.length}</p>
-        <p><strong>Stages Selected:</strong> {stages.length}</p>
-        <p><strong>Amenities Set:</strong> {Object.keys(amenities).length}</p>
-        <p><strong>Total Cost:</strong> ${totalCost.toLocaleString()}</p>
-        <p><strong>Total Energy Use:</strong> {totalEnergy} kWh</p>
+    <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6 border border-gray-200">
+      <h2 className="text-3xl font-extrabold text-indigo-700">📊 Festival Summary</h2>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Counts */}
+        <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl space-y-2">
+          <h3 className="text-md font-semibold text-indigo-800">🔢 Selections</h3>
+          <p className="text-sm text-gray-700">🎤 Artists Selected: <strong>{artists.length}</strong></p>
+          <p className="text-sm text-gray-700">🏟️ Stages Selected: <strong>{stages.length}</strong></p>
+          <p className="text-sm text-gray-700">🛠️ Amenities Set: <strong>{Object.values(amenities).reduce((a, b) => a + b, 0)}</strong></p>
+        </div>
+
+        {/* Totals */}
+        <div className="bg-green-50 border border-green-200 p-4 rounded-xl space-y-2">
+          <h3 className="text-md font-semibold text-green-800">💰 Totals</h3>
+          <p className="text-sm text-gray-700">💸 Total Cost: <strong>${totalCost.toLocaleString()}</strong></p>
+          <p className="text-sm text-gray-700">⚡ Total Energy Use: <strong>{totalEnergy} kWh</strong></p>
+        </div>
       </div>
-      <p className="text-xs text-gray-400 pt-2">These values are calculated live based on saved selections.</p>
+
+      <p className="text-xs text-gray-500 text-center pt-2">Values calculated from your saved selections in localStorage.</p>
     </div>
   );
 }

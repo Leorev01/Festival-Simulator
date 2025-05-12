@@ -52,23 +52,23 @@ festival-sim/
 ---
 
 ### 🧪 Features
-  🧍 Local login with profile
+-  🧍 Local login with profile
 
-  🎵 Select artists, stages, toilets, food vendors, and staff
+-  🎵 Select artists, stages, toilets, food vendors, and staff
 
-  📊 Simulate crowd impact, resource needs, and revenue
+-  📊 Simulate crowd impact, resource needs, and revenue
 
-  💡 Calculate CAPEX, OPEX, energy use, and overloads
+-  💡 Calculate CAPEX, OPEX, energy use, and overloads
 
-  💾 Save/load/export festival setups as JSON
+-  💾 Save/load/export festival setups as JSON
 
-  ⚙️ Works entirely offline (localStorage-based)
+-  ⚙️ Works entirely offline (localStorage-based)
 
 ### 📁 Dependencies
-React + TypeScript
+- React + TypeScript
 
-Tailwind CSS
+- Tailwind CSS
 
-React Router
+- React Router
 
-Vite (build tool)
+- Vite (build tool)

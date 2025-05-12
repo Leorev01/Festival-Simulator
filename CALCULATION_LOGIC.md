@@ -16,9 +16,9 @@ vendorRevenue = foodVendors * 500;
 To ensure a safe and functioning festival, the following minimum ratios are enforced:
 
 Resource	    Requirement
-Toilets     	1 per   75  attendees
-Food Vendors	1 per   250 attendees
-Staff Members	1 per   100 attendees
+Toilets     	    1 per   75  attendees
+Food Vendors	    1 per   250 attendees
+Staff Members	    1 per   100 attendees
 
 🏗️ CAPEX / OPEX / Energy Use
 Every festival element has associated setup costs and energy consumption:
@@ -36,9 +36,9 @@ Larger stages cost more and consume more power
 cost = count * costPerUnit
 energy = count * energyPerUnit
 Amenity	        Cost/Unit	Energy/Unit
-Toilet	        $1,000	    10 kWh
-Food Vendor	    $3,000	    50 kWh
-Staff Member	$500	    5 kWh
+Toilet	        $1,000	        10 kWh
+Food Vendor	   $3,000	   50 kWh
+Staff Member	$500	        5 kWh
 
 ⚠️ Overload Detection
 Warnings are triggered in the simulation if selected resources are insufficient:

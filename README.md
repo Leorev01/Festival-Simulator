@@ -17,17 +17,19 @@ A full-stack local web application that allows users to design and simulate thei
 
 ```bash
 # Clone the repo
-git clone <your-repo-url>
+git clone https://github.com/Leorev01/Festival-Simulator
 cd festival-sim
 
 # Install dependencies
 npm install
-
-🖥️ Run the App Locally
+```
+### 🖥️ Run the App Locally
+```bash
 npm run dev
 Open http://localhost:5173 in your browser.
-
-🗂️ Project Structure
+```
+### 🗂️ Project Structure
+```bash
 festival-sim/
 ├── public/
 ├── src/
@@ -45,9 +47,9 @@ festival-sim/
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
+```
 
-
-🧪 Features
+### 🧪 Features
 🧍 Local login with profile
 
 🎵 Select artists, stages, toilets, food vendors, and staff

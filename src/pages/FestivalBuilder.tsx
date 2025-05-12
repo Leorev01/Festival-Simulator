@@ -31,7 +31,11 @@ export default function FestivalBuilder() {
     switch (activeTab) {
       case 'Builder':
       return (
-        <div className="flex flex-col md:flex-row gap-8">
+        <motion.div className="flex flex-col md:flex-row gap-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex-1 space-y-12">
             <section>
               <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎤 Artist Selection</h2>
@@ -50,21 +54,25 @@ export default function FestivalBuilder() {
             </section>
           </div>
           <SidebarSummary />
-        </div>
+        </motion.div>
       );
 
       case 'Simulation':
         return <SimulationPanel />;
       case 'Summary':
         return (
-          <div className="space-y-6">
+          <motion.div className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <SummaryPanel />
             <section>
               <h2 className="text-2xl font-bold text-indigo-700">💾 Save or Export</h2>
               <p className="text-sm text-gray-500 mb-4">Save your setup for later or export it as JSON.</p>
               <FestivalSaver />
             </section>
-          </div>
+          </motion.div>
         );
       default:
         return null;
@@ -83,8 +91,8 @@ export default function FestivalBuilder() {
             key={tab}
             className={`px-5 py-2 text-sm font-medium rounded-md transition hover:cursor-pointer ${
               activeTab === tab
-                ? 'bg-indigo-600 shadow text-gray-400'
-                : 'bg-white border border-gray-300 text-white'
+                ? 'bg-indigo-600 text-white shadow hover:bg-indigo-800'
+                : 'bg-indigo-200 text-gray-700 hover:bg-indigo-300'
             }`}
             onClick={() => setActiveTab(tab)}
           >

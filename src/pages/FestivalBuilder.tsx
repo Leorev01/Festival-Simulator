@@ -86,7 +86,7 @@ export default function FestivalBuilder() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8 flex flex-col">
-      <h1 className="text-4xl font-bold mb-8 text-indigo-800">🎪 Festival Builder</h1>
+      <h1 className="text-4xl font-bold mb-8 text-indigo-800 cursor-pointer" onClick={() => navigate('/dashboard')}>🎪 Festival Builder</h1>
 
       <div className="flex gap-3 mb-10">
         {tabs.map((tab) => (

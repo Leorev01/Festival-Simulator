@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import {useEffect, useState} from 'react';
 import LoadingScreen from './components/LoadingScreen';
 import FestivalBuilder from './pages/FestivalBuilder';
-import FestivalComparison from './features/festival/FestivalComparison';
+import CompareFestivals from './pages/CompareFestivals';
 
 function App() {
 
@@ -24,7 +24,7 @@ function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path="/builder" element={<FestivalBuilder />} />
-      <Route path='/compare' element={<FestivalComparison />} />
+      <Route path='/compare' element={<CompareFestivals />} />
     </Routes>
   );
 }

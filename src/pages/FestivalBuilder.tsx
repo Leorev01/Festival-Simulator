@@ -1,3 +1,4 @@
+import AmenitySelector from '../features/festival/AmenitySelector';
 import ArtistSelector from '../features/festival/ArtistSelector';
 import StageSelector from '../features/festival/StageSelector';
 import SummaryPanel from '../features/festival/SummaryPanel';
@@ -10,6 +11,7 @@ export default function FestivalBuilder() {
         <div className="space-y-6">
           <ArtistSelector />
           <StageSelector />
+          <AmenitySelector />
         </div>
         <SummaryPanel />
       </div>

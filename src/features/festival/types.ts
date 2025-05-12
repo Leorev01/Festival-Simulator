@@ -12,3 +12,10 @@ export interface Stage {
   cost: number;
   energy: number;
 }
+
+export interface Amenity {
+  id: number;
+  name: string;
+  costPerUnit: number;
+  energyPerUnit: number;
+}

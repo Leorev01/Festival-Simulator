@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import RevenueTrendChart from '../../components/RevenueTrendCharts';
+import CrowdHealthScore from '../../components/CrowdHealthScore';
 
 const weatherModifiers = {
   Sunny: { vendorMultiplier: 1.0, staffBoost: 1.0 },
@@ -169,6 +170,14 @@ export default function SimulationPanel() {
           </ul>
         </div>
       )}
+
+      {/* ✅ Crowd Health Score */}
+      <CrowdHealthScore
+        attendance={attendance}
+        toilets={toilets}
+        foodVendors={food}
+        staff={staff}
+      />
 
       {/* Revenue Trend Chart */}
       <RevenueTrendChart weather={weather} amenities={amenities} />

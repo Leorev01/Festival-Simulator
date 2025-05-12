@@ -8,65 +8,72 @@ This document explains the logic and real-world assumptions used to simulate a m
 
 ```ts
 ticketRevenue = attendance * ticketPrice;
-
+```
 🍔 Vendor Revenue
+```ts
 vendorRevenue = foodVendors * 500;
-
+```
 🚽 Required Amenities
+```ts
 To ensure a safe and functioning festival, the following minimum ratios are enforced:
-
-Resource	    Requirement
+```
+Resource	        Requirement
 Toilets     	    1 per   75  attendees
 Food Vendors	    1 per   250 attendees
 Staff Members	    1 per   100 attendees
 
-🏗️ CAPEX / OPEX / Energy Use
+### 🏗️ CAPEX / OPEX / Energy Use
 Every festival element has associated setup costs and energy consumption:
 
+#### 🎤 Artists
+```ts
 cost: artist.cost
 energy: artist.energy
-
-Each artist has an individual cost and estimated kWh usage
-
+```
+#### 🏟️ Stages
+```ts
 cost: stage.cost
 energy: stage.energy
-
-Larger stages cost more and consume more power
-
+```
+#### 🚻 Amenities
+```ts
 cost = count * costPerUnit
 energy = count * energyPerUnit
+```
 Amenity	        Cost/Unit	Energy/Unit
-Toilet	        $1,000	        10 kWh
-Food Vendor	   $3,000	   50 kWh
-Staff Member	$500	        5 kWh
+Toilet	        $1,000	    10 kWh
+Food Vendor	    $3,000	    50 kWh
+Staff Member	$500	    5 kWh
 
-⚠️ Overload Detection
+### ⚠️ Overload Detection
 Warnings are triggered in the simulation if selected resources are insufficient:
+```ts
 if (toilets < required) show warning;
 if (staff < required) show warning;
 if (food < required) show warning;
+```
 These are displayed in the Simulation Panel with contextual messages.
 
-📊 Summary Metrics
+### 📊 Summary Metrics
 Displayed live to the user:
 
-Total CAPEX (setup cost)
+- Total CAPEX (setup cost)
 
-Total Energy (kWh)
+- Total Energy (kWh)
 
-Ticket Revenue
+- Ticket Revenue
 
-Vendor Revenue
+- Vendor Revenue
 
-Resource Shortage Warnings
+- Resource Shortage Warnings
 
-💾 Data Storage & Export
+### 💾 Data Storage & Export
 Festival setups (artists, stages, amenities) are stored in localStorage
 
 Users can:
 
-Save setups by name
+- Save setups by name
 
-Load saved setups
+- Load saved setups
 
-Export setups to .json for external use or submission
+- Export setups to .json for external use or submission

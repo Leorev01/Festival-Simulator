@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SimulationPanel() {
-  const [attendance, setAttendance] = useState(50000);
+  const [attendance, setAttendance] = useState(500000);
   const ticketPrice = 100;
 
   const toiletsNeeded = Math.ceil(attendance / 75);

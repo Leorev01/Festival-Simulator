@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import ArtistSelector from '../features/festival/ArtistSelector';
 import StageSelector from '../features/festival/StageSelector';
 import AmenitySelector from '../features/festival/AmenitySelector';
@@ -36,20 +37,26 @@ export default function FestivalBuilder() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">🎪 Festival Designer</h1>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold mb-6 text-indigo-700">
+        🎪 Festival Designer
+      </h1>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-3 mb-8">
         {tabs.map((tab) => (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             key={tab}
-            className={`px-4 py-2 rounded font-semibold ${
-              activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+            className={`px-4 py-2 font-medium rounded-full transition ${
+              activeTab === tab
+                ? 'bg-indigo-600 text-white shadow'
+                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
             }`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
-          </button>
+          </motion.button>
         ))}
       </div>
 

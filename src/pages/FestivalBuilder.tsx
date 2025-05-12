@@ -1,5 +1,6 @@
 import AmenitySelector from '../features/festival/AmenitySelector';
 import ArtistSelector from '../features/festival/ArtistSelector';
+import FestivalSaver from '../features/festival/FestivalSaver';
 import StageSelector from '../features/festival/StageSelector';
 import SummaryPanel from '../features/festival/SummaryPanel';
 import SimulationPanel from '../features/simulation/SimulationPanel';
@@ -14,8 +15,10 @@ export default function FestivalBuilder() {
           <StageSelector />
           <AmenitySelector />
           <SimulationPanel />
+          
         </div>
         <SummaryPanel />
+        <FestivalSaver />
       </div>
     </div>
   );

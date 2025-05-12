@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { AMENITIES } from './amenities';
 import type { Festival } from './types';
 
@@ -47,8 +48,47 @@ export default function FestivalComparison() {
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const normalizeMetrics = (metrics1: any, metrics2: any) => {
+    const maxCost = Math.max(metrics1.cost, metrics2.cost);
+    const maxEnergy = Math.max(metrics1.energy, metrics2.energy);
+    const maxArtists = Math.max(metrics1.artists, metrics2.artists);
+    const maxStages = Math.max(metrics1.stages, metrics2.stages);
+    const maxAmenities = Math.max(metrics1.amenities, metrics2.amenities);
+
+    return [
+      {
+        name: 'Cost',
+        Setup1: (metrics1.cost / maxCost) * 100,
+        Setup2: (metrics2.cost / maxCost) * 100,
+      },
+      {
+        name: 'Energy',
+        Setup1: (metrics1.energy / maxEnergy) * 100,
+        Setup2: (metrics2.energy / maxEnergy) * 100,
+      },
+      {
+        name: 'Artists',
+        Setup1: (metrics1.artists / maxArtists) * 100,
+        Setup2: (metrics2.artists / maxArtists) * 100,
+      },
+      {
+        name: 'Stages',
+        Setup1: (metrics1.stages / maxStages) * 100,
+        Setup2: (metrics2.stages / maxStages) * 100,
+      },
+      {
+        name: 'Amenities',
+        Setup1: (metrics1.amenities / maxAmenities) * 100,
+        Setup2: (metrics2.amenities / maxAmenities) * 100,
+      },
+    ];
+  };
+
   const metrics1 = calculateMetrics(setup1);
   const metrics2 = calculateMetrics(setup2);
+
+  const normalizedChartData = normalizeMetrics(metrics1, metrics2);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg space-y-6">
@@ -103,13 +143,17 @@ export default function FestivalComparison() {
           </div>
 
           <div className="bg-indigo-50 p-4 rounded-lg shadow mt-4">
-            <h3 className="text-lg font-bold text-indigo-700">Comparison Summary</h3>
-            <p className="text-sm">
-              {metrics1.cost < metrics2.cost ? 'Setup 1 is more cost-effective.' : 'Setup 2 is more cost-effective.'}
-            </p>
-            <p className="text-sm">
-              {metrics1.energy < metrics2.energy ? 'Setup 1 is more energy-efficient.' : 'Setup 2 is more energy-efficient.'}
-            </p>
+            <h3 className="text-lg font-bold text-indigo-700">Comparison Chart (% of Total)</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={normalizedChartData}>
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 100]} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="Setup1" fill="#8884d8" />
+                <Bar dataKey="Setup2" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}

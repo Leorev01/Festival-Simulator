@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SimulationPanel() {
   const [attendance, setAttendance] = useState(500000);
@@ -18,99 +17,86 @@ export default function SimulationPanel() {
   const vendorRevenue = food * 500;
   const totalRevenue = ticketRevenue + vendorRevenue;
 
-  const warnings = [];
-  if (toilets < toiletsNeeded) warnings.push('🚽 Not enough toilets');
-  if (food < foodNeeded) warnings.push('🍔 Too few food vendors');
-  if (staff < staffNeeded) warnings.push('👷 Understaffed');
+  const getStatus = (actual: number, required: number) => {
+    const ratio = actual / required;
+    if (ratio >= 1) return { label: '✅ Sufficient', color: 'text-green-700' };
+    if (ratio >= 0.8) return { label: '⚠️ Slightly Under', color: 'text-yellow-600' };
+    return { label: '❌ Critically Low', color: 'text-red-600' };
+  };
+
+  const resources = [
+    {
+      name: 'Toilets',
+      actual: toilets,
+      required: toiletsNeeded,
+    },
+    {
+      name: 'Food Vendors',
+      actual: food,
+      required: foodNeeded,
+    },
+    {
+      name: 'Staff Members',
+      actual: staff,
+      required: staffNeeded,
+    },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 py-10 px-4 sm:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto backdrop-blur-lg bg-white/70 rounded-2xl shadow-xl p-8 space-y-8 border border-white/40"
-      >
-        <h2 className="text-4xl font-extrabold text-indigo-800 flex items-center gap-2">
-          🎪 Festival Simulation
-        </h2>
+    <div className="bg-white p-6 rounded-xl shadow-lg space-y-6">
+      <h2 className="text-3xl font-bold text-indigo-700">📈 Simulation Results</h2>
 
-        {/* Attendance input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Expected Attendance
-          </label>
-          <input
-            type="number"
-            className="w-full text-lg p-3 border border-indigo-300 rounded-lg shadow-inner focus:ring-2 focus:ring-indigo-400"
-            value={attendance}
-            onChange={(e) => setAttendance(parseInt(e.target.value))}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Adjust to simulate different crowd sizes.
-          </p>
-        </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 mb-1 block">Expected Attendance</label>
+        <input
+          type="number"
+          className="border p-3 rounded w-full text-lg"
+          value={attendance}
+          onChange={(e) => setAttendance(parseInt(e.target.value))}
+          placeholder="Enter number of attendees"
+        />
+        <p className="text-xs text-gray-400 mt-1">Used to calculate resource requirements and revenue.</p>
+      </div>
 
-        {/* Requirement cards */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { label: '🚽 Toilets', needed: toiletsNeeded, have: toilets },
-            { label: '🍔 Food Vendors', needed: foodNeeded, have: food },
-            { label: '👷 Staff', needed: staffNeeded, have: staff }
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ backgroundColor: 'lightgrey' }}
-              className="rounded-xl p-5 bg-white/80 border border-indigo-100 shadow"
-            >
-              <h4 className="text-sm font-semibold text-indigo-600 mb-1">
-                {item.label}
-              </h4>
-              <p className="text-sm text-gray-700">
-                Required: <strong>{item.needed}</strong>
+      {/* Resource Requirements with Status */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        {resources.map((r, i) => {
+          const status = getStatus(r.actual, r.required);
+          const percent = Math.min((r.actual / r.required) * 100, 100);
+
+          return (
+            <div key={i} className="bg-gray-50 rounded-lg p-4 border">
+              <h4 className="text-sm font-bold text-gray-700 mb-1">{r.name}</h4>
+              <p className="text-sm text-gray-500 mb-2">
+                Required: <strong>{r.required}</strong> • Provided: <strong>{r.actual}</strong>
               </p>
-              <p className="text-sm text-gray-700">
-                You have: <strong>{item.have}</strong>
-              </p>
-            </motion.div>
-          ))}
-        </div>
+              <div className="h-2 w-full bg-gray-200 rounded">
+                <div
+                  className={`h-2 rounded ${status.color} bg-opacity-70`}
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+              <p className={`text-xs mt-2 font-medium ${status.color}`}>{status.label}</p>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Revenue cards */}
-        <div className="grid md:grid-cols-3 gap-6 mt-4">
-          <div className="bg-green-100 p-4 rounded-xl border border-green-300 shadow-sm">
-            <h4 className="text-sm font-semibold text-green-800 mb-1">🎟️ Ticket Revenue</h4>
-            <p className="text-xl font-bold text-green-900">${ticketRevenue.toLocaleString()}</p>
-          </div>
-          <div className="bg-yellow-100 p-4 rounded-xl border border-yellow-300 shadow-sm">
-            <h4 className="text-sm font-semibold text-yellow-800 mb-1">🍟 Vendor Revenue</h4>
-            <p className="text-xl font-bold text-yellow-900">${vendorRevenue.toLocaleString()}</p>
-          </div>
-          <div className="bg-blue-100 p-4 rounded-xl border border-blue-300 shadow-sm">
-            <h4 className="text-sm font-semibold text-blue-800 mb-1">💰 Total Revenue</h4>
-            <p className="text-xl font-bold text-blue-900">${totalRevenue.toLocaleString()}</p>
-          </div>
+      {/* Revenue Summary */}
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
+        <div className="bg-green-100 p-4 rounded-lg border border-green-200">
+          <h4 className="text-sm font-semibold text-green-800 mb-1">🎟️ Ticket Revenue</h4>
+          <p className="text-lg font-bold text-green-900">${ticketRevenue.toLocaleString()}</p>
         </div>
-
-        {/* Warnings */}
-        <AnimatePresence>
-          {warnings.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="bg-red-100 border border-red-300 text-red-800 p-5 rounded-lg mt-6"
-            >
-              <h4 className="text-sm font-semibold mb-2">⚠️ Simulation Warnings</h4>
-              <ul className="list-disc ml-5 space-y-1 text-sm">
-                {warnings.map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+        <div className="bg-yellow-100 p-4 rounded-lg border border-yellow-200">
+          <h4 className="text-sm font-semibold text-yellow-800 mb-1">🍟 Vendor Revenue</h4>
+          <p className="text-lg font-bold text-yellow-900">${vendorRevenue.toLocaleString()}</p>
+        </div>
+        <div className="bg-blue-100 p-4 rounded-lg border border-blue-200">
+          <h4 className="text-sm font-semibold text-blue-800 mb-1">💰 Total Revenue</h4>
+          <p className="text-lg font-bold text-blue-900">${totalRevenue.toLocaleString()}</p>
+        </div>
+      </div>
     </div>
   );
 }

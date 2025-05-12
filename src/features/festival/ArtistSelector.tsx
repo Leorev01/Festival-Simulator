@@ -3,14 +3,16 @@ import { motion } from 'framer-motion';
 import { ARTISTS } from './artists';
 import type { Artist } from './types';
 import { CheckCircle2 } from 'lucide-react';
+import { useFestival } from '../../context/FestivalContext';
 
 export default function ArtistSelector() {
   const [selected, setSelected] = useState<Artist[]>([]);
+  const { reloadKey } = useFestival();
 
   useEffect(() => {
     const saved = localStorage.getItem('selected-artists');
     if (saved) setSelected(JSON.parse(saved));
-  }, []);
+  }, [reloadKey]);
 
   useEffect(() => {
     localStorage.setItem('selected-artists', JSON.stringify(selected));

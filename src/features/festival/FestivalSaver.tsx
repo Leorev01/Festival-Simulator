@@ -1,24 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { saveFestival, getSavedFestivals } from '../../utils/saveUtils';
-
+import { useFestival } from '../../context/FestivalContext';
+import type {Festival} from './types';
 export default function FestivalSaver() {
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(getSavedFestivals());
+  const [currentFestival, setCurrentFestival] = useState<Festival | null>(null);
+  const { triggerReload } = useFestival();
 
   const handleSave = () => {
     if (name.trim()) {
-      saveFestival(name.trim());
-      setSaved(getSavedFestivals());
+      const artists = JSON.parse(localStorage.getItem('selected-artists') || '[]');
+      const stages = JSON.parse(localStorage.getItem('selected-stages') || '[]');
+      const amenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
+      const events = JSON.parse(localStorage.getItem('saved-events') || '[]');
+
+      const newFestival = {
+        name: name.trim(),
+        artists,
+        stages,
+        amenities,
+        events,
+      };
+
+      const updated = [...saved, newFestival];
+      localStorage.setItem('saved-festivals', JSON.stringify(updated));
+      setSaved(updated);
       setName('');
     }
   };
 
   const handleDelete = (index: number) => {
-  const updated = saved.filter((_: any, i: number) => i !== index);
-  setSaved(updated);
-  localStorage.setItem('saved-festivals', JSON.stringify(updated));
-};
+    const updated = saved.filter((_: any, i: number) => i !== index);
+    setSaved(updated);
+    localStorage.setItem('saved-festivals', JSON.stringify(updated));
+  };
 
   const exportToFile = (festival: any) => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(festival, null, 2));
@@ -30,12 +48,25 @@ export default function FestivalSaver() {
     downloadAnchorNode.remove();
   };
 
-  const loadFestival = (festival: any) => {
-    localStorage.setItem('selected-artists', JSON.stringify(festival.artists));
-    localStorage.setItem('selected-stages', JSON.stringify(festival.stages));
-    localStorage.setItem('selected-amenities', JSON.stringify(festival.amenities));
-    window.location.reload();
+const loadFestival = (festival: Festival) => {
+  const defaultFestival = {
+    name: '',
+    artists: [],
+    stages: [],
+    amenities: {},
+    events: [],
   };
+
+  const loadedFestival = { ...defaultFestival, ...festival };
+
+  localStorage.setItem('selected-artists', JSON.stringify(loadedFestival.artists));
+  localStorage.setItem('selected-stages', JSON.stringify(loadedFestival.stages));
+  localStorage.setItem('selected-amenities', JSON.stringify(loadedFestival.amenities));
+  localStorage.setItem('saved-events', JSON.stringify(loadedFestival.events));
+
+  setCurrentFestival(loadedFestival);
+  triggerReload();
+};
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
@@ -49,7 +80,7 @@ export default function FestivalSaver() {
           onChange={(e) => setName(e.target.value)}
         />
         <button
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 cursor-pointer"
           onClick={handleSave}
         >
           Save
@@ -68,6 +99,18 @@ export default function FestivalSaver() {
           </li>
         ))}
       </ul>
+
+      {currentFestival && (
+        <div className="bg-gray-100 p-4 rounded-lg shadow mt-4">
+          <h3 className="text-lg font-bold text-indigo-700">🎪 Loaded Festival: {currentFestival.name}</h3>
+          <p className="text-sm text-gray-600">Artists: {currentFestival.artists?.length || 0}</p>
+          <p className="text-sm text-gray-600">Stages: {currentFestival.stages?.length || 0}</p>
+          <p className="text-sm text-gray-600">
+            Amenities: {Object.values(currentFestival.amenities || {}).reduce((a, b) => a + b, 0)}
+          </p>
+          <p className="text-sm text-gray-600">Events: {currentFestival.events?.length || 0}</p>
+        </div>
+      )}
     </div>
   );
 }

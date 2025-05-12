@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import {useNavigate} from 'react-router-dom';
 import ArtistSelector from '../features/festival/ArtistSelector';
 import StageSelector from '../features/festival/StageSelector';
 import AmenitySelector from '../features/festival/AmenitySelector';
@@ -12,6 +13,7 @@ const tabs = ['Builder', 'Simulation', 'Summary'];
 
 export default function FestivalBuilder() {
   const [activeTab, setActiveTab] = useState('Builder');
+  const navigate = useNavigate();
 
   const goToNextTab = () => {
     const currentIndex = tabs.indexOf(activeTab);
@@ -67,6 +69,9 @@ export default function FestivalBuilder() {
             transition={{ duration: 0.5 }}
           >
             <SummaryPanel />
+            <button onClick={() => navigate('/compare')} className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition cursor-pointer">
+              Compare Setups
+            </button>
             <section>
               <h2 className="text-2xl font-bold text-indigo-700">💾 Save or Export</h2>
               <p className="text-sm text-gray-500 mb-4">Save your setup for later or export it as JSON.</p>

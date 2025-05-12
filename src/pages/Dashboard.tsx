@@ -20,6 +20,15 @@ export default function Dashboard() {
           Start Festival Builder
         </Link>
       </motion.div>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Link
+          to="/compare"
+          className="mt-4 inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+        >
+          🔍 Compare Setups
+        </Link>
+      </motion.div>
+        
 
     </div>
   );

@@ -19,3 +19,11 @@ export interface Amenity {
   costPerUnit: number;
   energyPerUnit: number;
 }
+
+export interface Festival {
+  name: string;
+  artists: Artist[];
+  stages: Stage[];
+  amenities: Record<number, number>; // amenity ID to quantity
+  events: string[];
+}

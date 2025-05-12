@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import {useEffect, useState} from 'react';
 import LoadingScreen from './components/LoadingScreen';
+import FestivalBuilder from './pages/FestivalBuilder';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
       <Route path='/' element={<Navigate to ='/login' />} />
       <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<Dashboard />} />
+      <Route path="/builder" element={<FestivalBuilder />} />
     </Routes>
     /*<div className="min-h-screen bg-gradient-to-br from-blue-200 to-indigo-300 flex items-center justify-center">
       <h1 className="text-4xl font-bold text-white">🎪 Festival Simulator</h1>

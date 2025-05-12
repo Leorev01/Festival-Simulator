@@ -6,6 +6,7 @@ import AmenitySelector from '../features/festival/AmenitySelector';
 import SimulationPanel from '../features/simulation/SimulationPanel';
 import SummaryPanel from '../features/festival/SummaryPanel';
 import FestivalSaver from '../features/festival/FestivalSaver';
+import SidebarSummary from '../components/SidebarSummary';
 
 const tabs = ['Builder', 'Simulation', 'Summary'];
 
@@ -29,8 +30,9 @@ export default function FestivalBuilder() {
   const renderTab = () => {
     switch (activeTab) {
       case 'Builder':
-        return (
-          <div className="space-y-12">
+      return (
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex-1 space-y-12">
             <section>
               <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎤 Artist Selection</h2>
               <p className="text-sm text-gray-500 mb-4">Choose performers for your festival.</p>
@@ -47,7 +49,10 @@ export default function FestivalBuilder() {
               <AmenitySelector />
             </section>
           </div>
-        );
+          <SidebarSummary />
+        </div>
+      );
+
       case 'Simulation':
         return <SimulationPanel />;
       case 'Summary':
@@ -76,10 +81,10 @@ export default function FestivalBuilder() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             key={tab}
-            className={`px-5 py-2 text-sm font-medium rounded-full transition ${
+            className={`px-5 py-2 text-sm font-medium rounded-md transition hover:cursor-pointer ${
               activeTab === tab
-                ? 'bg-indigo-600 text-white shadow'
-                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
+                ? 'bg-indigo-600 shadow text-gray-400'
+                : 'bg-white border border-gray-300 text-white'
             }`}
             onClick={() => setActiveTab(tab)}
           >

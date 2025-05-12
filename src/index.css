@@ -23,17 +23,6 @@ body,
 }
 
 
-/* Button base styling */
-button {
-  @apply rounded-md px-4 py-2 font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition;
-}
-
-/* Header styling fallback (for non-Tailwind usage) */
-h1 {
-  font-size: 2.5rem;
-  line-height: 1.2;
-}
-
 /* Light mode overrides */
 @media (prefers-color-scheme: light) {
   :root {

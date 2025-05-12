@@ -49,6 +49,8 @@ festival-sim/
 └── vite.config.ts
 ```
 
+---
+
 ### 🧪 Features
   🧍 Local login with profile
 

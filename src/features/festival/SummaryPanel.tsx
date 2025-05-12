@@ -8,49 +8,32 @@ export default function SummaryPanel() {
   const [amenities, setAmenities] = useState<Record<number, number>>({});
 
   useEffect(() => {
-    const savedArtists = localStorage.getItem('selected-artists');
-    const savedStages = localStorage.getItem('selected-stages');
-    const savedAmenities = localStorage.getItem('selected-amenities');
-
-    if (savedArtists) setArtists(JSON.parse(savedArtists));
-    if (savedStages) setStages(JSON.parse(savedStages));
-    if (savedAmenities) setAmenities(JSON.parse(savedAmenities));
+    setArtists(JSON.parse(localStorage.getItem('selected-artists') || '[]'));
+    setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
+    setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
   }, []);
 
   const artistCost = artists.reduce((sum, a) => sum + a.cost, 0);
   const artistEnergy = artists.reduce((sum, a) => sum + a.energy, 0);
-
   const stageCost = stages.reduce((sum, s) => sum + s.cost, 0);
   const stageEnergy = stages.reduce((sum, s) => sum + s.energy, 0);
-
-  const amenityCost = AMENITIES.reduce((sum, a) => {
-    const count = amenities[a.id] || 0;
-    return sum + count * a.costPerUnit;
-  }, 0);
-
-  const amenityEnergy = AMENITIES.reduce((sum, a) => {
-    const count = amenities[a.id] || 0;
-    return sum + count * a.energyPerUnit;
-  }, 0);
+  const amenityCost = AMENITIES.reduce((sum, a) => sum + (amenities[a.id] || 0) * a.costPerUnit, 0);
+  const amenityEnergy = AMENITIES.reduce((sum, a) => sum + (amenities[a.id] || 0) * a.energyPerUnit, 0);
 
   const totalCost = artistCost + stageCost + amenityCost;
   const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
 
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-sm">
-      <h2 className="text-lg font-bold mb-2">Festival Summary</h2>
-
-      <div className="text-sm space-y-1">
-        <p><strong>Selected Artists:</strong> {artists.length}</p>
-        <p><strong>Selected Stages:</strong> {stages.length}</p>
-        <p><strong>Amenities:</strong> {Object.keys(amenities).length}</p>
+    <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+      <h2 className="text-3xl font-bold text-indigo-700 mb-2">📊 Festival Summary</h2>
+      <div className="space-y-1 text-sm text-gray-700">
+        <p><strong>Artists Selected:</strong> {artists.length}</p>
+        <p><strong>Stages Selected:</strong> {stages.length}</p>
+        <p><strong>Amenities Set:</strong> {Object.keys(amenities).length}</p>
         <p><strong>Total Cost:</strong> ${totalCost.toLocaleString()}</p>
-        <p><strong>Total Energy:</strong> {totalEnergy} kWh</p>
+        <p><strong>Total Energy Use:</strong> {totalEnergy} kWh</p>
       </div>
-
-      <div className="mt-3 text-xs text-gray-500">
-        * This summary updates on reload (reads from localStorage).
-      </div>
+      <p className="text-xs text-gray-400 pt-2">These values are calculated live based on saved selections.</p>
     </div>
   );
 }

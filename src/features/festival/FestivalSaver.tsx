@@ -28,53 +28,39 @@ export default function FestivalSaver() {
     localStorage.setItem('selected-artists', JSON.stringify(festival.artists));
     localStorage.setItem('selected-stages', JSON.stringify(festival.stages));
     localStorage.setItem('selected-amenities', JSON.stringify(festival.amenities));
-    window.location.reload(); // reload app to reflect changes
+    window.location.reload();
   };
 
   return (
-    <div className="p-4 bg-white rounded shadow space-y-4">
-      <h2 className="text-lg font-bold">💾 Save, Load & Export Festival</h2>
-
-      <div className="flex items-center gap-2">
+    <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+      <h2 className="text-2xl font-bold text-indigo-700">💾 Save, Load & Export</h2>
+      <div className="flex gap-2">
         <input
           type="text"
-          className="border p-2 rounded"
+          className="border p-2 rounded w-full"
           placeholder="Festival Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
           onClick={handleSave}
         >
-          Save Setup
+          Save
         </button>
       </div>
 
-      <div>
-        <h3 className="font-semibold text-sm mb-2">Saved Festivals</h3>
-        <ul className="text-sm space-y-1">
-          {saved.map((f: any, i: number) => (
-            <li key={i} className="flex justify-between items-center border p-2 rounded">
-              <span>{f.name}</span>
-              <div className="flex gap-2">
-                <button
-                  className="text-blue-600 underline"
-                  onClick={() => exportToFile(f)}
-                >
-                  Export
-                </button>
-                <button
-                  className="text-purple-600 underline"
-                  onClick={() => loadFestival(f)}
-                >
-                  Load
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="divide-y text-sm border-t pt-3">
+        {saved.map((f: any, i: number) => (
+          <li key={i} className="py-2 flex justify-between items-center">
+            <span>{f.name}</span>
+            <div className="flex gap-3 text-xs">
+              <button className="text-blue-600 hover:underline" onClick={() => exportToFile(f)}>Export</button>
+              <button className="text-green-600 hover:underline" onClick={() => loadFestival(f)}>Load</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

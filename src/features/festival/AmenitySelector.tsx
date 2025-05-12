@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { AMENITIES } from './amenities';
-//import type { Amenity } from './types';
 
 interface Selection {
-  [amenityId: number]: number; // unit count
+  [amenityId: number]: number;
 }
 
 export default function AmenitySelector() {
@@ -22,38 +22,35 @@ export default function AmenitySelector() {
     setSelection((prev) => ({ ...prev, [id]: value }));
   };
 
-  const totalCost = AMENITIES.reduce((sum, a) => {
-    const count = selection[a.id] || 0;
-    return sum + count * a.costPerUnit;
-  }, 0);
-
-  const totalEnergy = AMENITIES.reduce((sum, a) => {
-    const count = selection[a.id] || 0;
-    return sum + count * a.energyPerUnit;
-  }, 0);
+  const totalCost = AMENITIES.reduce((sum, a) => (selection[a.id] || 0) * a.costPerUnit + sum, 0);
+  const totalEnergy = AMENITIES.reduce((sum, a) => (selection[a.id] || 0) * a.energyPerUnit + sum, 0);
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-2">Select Amenities</h2>
-      <ul className="space-y-3">
+    <div className="bg-white rounded-xl p-6 shadow-lg space-y-6">
+      <h2 className="text-3xl font-bold text-indigo-700">🛠️ Amenities</h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {AMENITIES.map((a) => (
-          <li key={a.id} className="flex items-center gap-4">
-            <label className="w-32">{a.name}</label>
+          <motion.div
+            key={a.id}
+            className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200"
+          >
+            <label className="block font-medium mb-1 text-gray-700">{a.name}</label>
             <input
               type="number"
-              className="border rounded p-1 w-20"
               min={0}
+              className="w-[85%] border border-gray-300 p-2 rounded-md"
               value={selection[a.id] || ''}
               onChange={(e) => handleChange(a.id, parseInt(e.target.value) || 0)}
             />
-            <span className="text-sm text-gray-500">
-              ${a.costPerUnit} each | {a.energyPerUnit} kWh
-            </span>
-          </li>
+            <p className="text-sm mt-2 text-gray-500">
+              ${a.costPerUnit} • {a.energyPerUnit} kWh
+            </p>
+          </motion.div>
         ))}
-      </ul>
+      </div>
 
-      <div className="mt-4 text-sm text-gray-700">
+      <div className="text-sm text-indigo-900 border-t pt-4">
         <p><strong>Total Amenity Cost:</strong> ${totalCost.toLocaleString()}</p>
         <p><strong>Total Amenity Energy:</strong> {totalEnergy} kWh</p>
       </div>

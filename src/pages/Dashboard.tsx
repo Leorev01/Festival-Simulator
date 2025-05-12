@@ -15,11 +15,12 @@ export default function Dashboard() {
       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
         <Link
           to="/builder"
-          className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+          className="bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg shadow-md transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
         >
           Start Festival Builder
         </Link>
       </motion.div>
+
     </div>
   );
 }

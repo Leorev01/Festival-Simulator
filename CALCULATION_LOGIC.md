@@ -68,7 +68,7 @@ energy = count * energyPerUnit
 ```ts
 Amenity	        Cost/Unit	Energy/Unit
 Toilet	        $1,000	        10 kWh
-Food Vendor     $3,000      50 kWh
+Food Vendor     $3,000          50 kWh
 Staff Member	$500	        5 kWh
 ```
 

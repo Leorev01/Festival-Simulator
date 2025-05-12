@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import RevenueTrendChart from '../../components/RevenueTrendCharts';
 import CrowdHealthScore from '../../components/CrowdHealthScore';
+import EnvironmentalImpactScore from '../../components/EnvironmentalImpactScore';
+import { AMENITIES } from '../festival/amenities';
 
 const weatherModifiers = {
   Sunny: { vendorMultiplier: 1.0, staffBoost: 1.0 },
@@ -40,6 +43,22 @@ export default function SimulationPanel() {
   });
 
   const totalRevenue = ticketRevenue + vendorRevenue;
+
+  const artistEnergy = (JSON.parse(localStorage.getItem('selected-artists') || '[]') as any[]).reduce(
+    (sum, a) => sum + a.energy,
+    0
+  );
+  const stageEnergy = (JSON.parse(localStorage.getItem('selected-stages') || '[]') as any[]).reduce(
+    (sum, s) => sum + s.energy,
+    0
+  );
+  const amenityEnergy = Object.entries(amenities).reduce((sum, [id, count]) => {
+    const amenity = AMENITIES.find((a) => a.id === Number(id));
+    return sum + (amenity ? amenity.energyPerUnit * Number(count) : 0);
+  }, 0);
+
+  const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
+
 
   const getStatus = (actual: number, required: number) => {
     const ratio = actual / required;
@@ -181,6 +200,9 @@ export default function SimulationPanel() {
 
       {/* Revenue Trend Chart */}
       <RevenueTrendChart weather={weather} amenities={amenities} />
+
+      {/* Environmental Impact */}
+      <EnvironmentalImpactScore totalEnergy={totalEnergy} />
     </div>
   );
 }

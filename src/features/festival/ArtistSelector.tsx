@@ -1,25 +1,14 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useFestival } from '../../context/FestivalContext'; // adjust path as needed
 import { ARTISTS } from './artists';
 import type { Artist } from './types';
+import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import { useFestival } from '../../context/FestivalContext';
 
 export default function ArtistSelector() {
-  const [selected, setSelected] = useState<Artist[]>([]);
-  const { reloadKey } = useFestival();
-
-  useEffect(() => {
-    const saved = localStorage.getItem('selected-artists');
-    if (saved) setSelected(JSON.parse(saved));
-  }, [reloadKey]);
-
-  useEffect(() => {
-    localStorage.setItem('selected-artists', JSON.stringify(selected));
-  }, [selected]);
+  const { artists: selected, setArtists: setSelected } = useFestival(); // ✅ use context state
 
   const toggleArtist = (artist: Artist) => {
-    setSelected((prev) =>
+    setSelected((prev: Artist[]) =>
       prev.some((a) => a.id === artist.id)
         ? prev.filter((a) => a.id !== artist.id)
         : [...prev, artist]
@@ -52,15 +41,10 @@ export default function ArtistSelector() {
               }`}
             >
               {isSelected && (
-                <CheckCircle2
-                  className="absolute top-3 right-3 text-indigo-600"
-                  size={20}
-                />
+                <CheckCircle2 className="absolute top-3 right-3 text-indigo-600" size={20} />
               )}
               <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {artist.name}
-                </h3>
+                <h3 className="text-lg font-semibold text-gray-800">{artist.name}</h3>
                 <p className="text-sm text-gray-500">
                   Energy Use: <strong>{artist.energy} kWh</strong>
                 </p>

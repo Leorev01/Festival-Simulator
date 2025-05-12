@@ -1,23 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AMENITIES } from './amenities';
 import type { Amenity } from './types';
-
-interface Selection {
-  [amenityId: number]: number;
-}
+import { useFestival } from '../../context/FestivalContext';
 
 export default function AmenitySelector() {
-  const [selection, setSelection] = useState<Selection>({});
+  const { amenities: selection, setAmenities: setSelection } = useFestival();
   const [attendance, setAttendance] = useState(500000);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('selected-amenities');
-    if (saved) setSelection(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('selected-amenities', JSON.stringify(selection));
-  }, [selection]);
 
   const handleChange = (id: number, value: number) => {
     setSelection((prev) => ({ ...prev, [id]: value }));
@@ -54,7 +42,7 @@ export default function AmenitySelector() {
           onClick={applySuggestions}
           className="mt-2 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
         >
-          📥 Apply Recommendations
+          📅 Apply Recommendations
         </button>
       </div>
 

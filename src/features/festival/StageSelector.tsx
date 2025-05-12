@@ -1,23 +1,14 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { STAGES } from './stages';
 import type { Stage } from './types';
 import { CheckCircle2 } from 'lucide-react';
+import { useFestival } from '../../context/FestivalContext';
 
 export default function StageSelector() {
-  const [selected, setSelected] = useState<Stage[]>([]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('selected-stages');
-    if (saved) setSelected(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('selected-stages', JSON.stringify(selected));
-  }, [selected]);
+  const { stages: selected, setStages: setSelected } = useFestival();
 
   const toggleStage = (stage: Stage) => {
-    setSelected((prev) =>
+    setSelected((prev: Stage[]) =>
       prev.find((s) => s.id === stage.id)
         ? prev.filter((s) => s.id !== stage.id)
         : [...prev, stage]

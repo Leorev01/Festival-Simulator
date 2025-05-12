@@ -24,9 +24,16 @@ export default function FestivalSaver() {
     downloadAnchorNode.remove();
   };
 
+  const loadFestival = (festival: any) => {
+    localStorage.setItem('selected-artists', JSON.stringify(festival.artists));
+    localStorage.setItem('selected-stages', JSON.stringify(festival.stages));
+    localStorage.setItem('selected-amenities', JSON.stringify(festival.amenities));
+    window.location.reload(); // reload app to reflect changes
+  };
+
   return (
     <div className="p-4 bg-white rounded shadow space-y-4">
-      <h2 className="text-lg font-bold">💾 Save & Export Festival</h2>
+      <h2 className="text-lg font-bold">💾 Save, Load & Export Festival</h2>
 
       <div className="flex items-center gap-2">
         <input
@@ -50,12 +57,20 @@ export default function FestivalSaver() {
           {saved.map((f: any, i: number) => (
             <li key={i} className="flex justify-between items-center border p-2 rounded">
               <span>{f.name}</span>
-              <button
-                className="text-blue-600 underline"
-                onClick={() => exportToFile(f)}
-              >
-                Export JSON
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="text-blue-600 underline"
+                  onClick={() => exportToFile(f)}
+                >
+                  Export
+                </button>
+                <button
+                  className="text-purple-600 underline"
+                  onClick={() => loadFestival(f)}
+                >
+                  Load
+                </button>
+              </div>
             </li>
           ))}
         </ul>

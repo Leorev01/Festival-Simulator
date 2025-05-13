@@ -6,12 +6,15 @@ export default function SidebarSummary() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
   const [amenities, setAmenities] = useState<Record<number, number>>({});
+  const [weather, setWeather] = useState<string>('Sunny'); // Current weather
 
   useEffect(() => {
     const interval = setInterval(() => {
       setArtists(JSON.parse(localStorage.getItem('selected-artists') || '[]'));
       setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
       setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
+      setWeather(localStorage.getItem('current-weather') || 'Sunny'); // Fetch current weather
+
     }, 500); // auto-refresh every 0.5s
     return () => clearInterval(interval);
   }, []);
@@ -24,15 +27,37 @@ export default function SidebarSummary() {
   const stageEnergy = stages.reduce((sum, s) => sum + s.energy, 0);
   const amenityEnergy = AMENITIES.reduce((sum, a) => (amenities[a.id] || 0) * a.energyPerUnit + sum, 0);
 
+  const totalCost = artistCost + stageCost + amenityCost;
+  const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
+
+  // Calculate Popularity Score
+  const calculatePopularityScore = () => {
+    const artistPopularity = artists.length * 10; // Each artist adds 10 points
+    const stagePopularity = stages.reduce((sum, stage) => sum + stage.capacity / 1000, 0); // Larger stages add more points
+    const amenityPopularity = Object.values(amenities).reduce((sum, count) => sum + count * 5, 0); // Each amenity adds 5 points per unit
+    return Math.round(artistPopularity + stagePopularity + amenityPopularity);
+  };
+
+  const popularityScore = calculatePopularityScore();
+
   return (
     <aside className="bg-white shadow-md p-4 rounded-lg border border-gray-100 w-full md:w-72 sticky top-6 md:self-start">
       <h3 className="text-xl font-semibold text-indigo-700 mb-4">📋 Festival Summary</h3>
       <ul className="text-sm text-gray-700 space-y-2">
+        {/* General Counts */}
         <li>🎤 <strong>Artists:</strong> {artists.length}</li>
         <li>🏟️ <strong>Stages:</strong> {stages.length}</li>
         <li>🛠️ <strong>Amenities:</strong> {Object.values(amenities).reduce((a, b) => a + b, 0)}</li>
-        <li className="pt-2 border-t border-gray-200">💰 <strong>Total Cost:</strong> ${artistCost + stageCost + amenityCost}</li>
-        <li>⚡ <strong>Total Energy:</strong> {artistEnergy + stageEnergy + amenityEnergy} kWh</li>
+
+        {/* Financials */}
+        <li className="pt-2 border-t border-gray-200">💰 <strong>Total Cost:</strong> ${totalCost.toLocaleString()}</li>
+        <li>⚡ <strong>Total Energy:</strong> {totalEnergy.toFixed(2)} kWh</li>
+
+        {/* Popularity Score */}
+        <li className="pt-2 border-t border-gray-200">🌟 <strong>Popularity Score:</strong> {popularityScore} / 100</li>
+
+        {/* Weather Impact */}
+        <li className="pt-2 border-t border-gray-200">🌤 <strong>Current Weather:</strong> {weather}</li>
       </ul>
     </aside>
   );

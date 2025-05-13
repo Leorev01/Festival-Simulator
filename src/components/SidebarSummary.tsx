@@ -7,6 +7,7 @@ export default function SidebarSummary() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [amenities, setAmenities] = useState<Record<number, number>>({});
   const [weather, setWeather] = useState<string>('Sunny'); // Current weather
+  const [attendance, setAttendance] = useState<number>(5000); // Expected attendance
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -14,7 +15,7 @@ export default function SidebarSummary() {
       setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
       setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
       setWeather(localStorage.getItem('current-weather') || 'Sunny'); // Fetch current weather
-
+      setAttendance(Number(localStorage.getItem('expected-attendance')) || 5000); // Fetch expected attendance
     }, 500); // auto-refresh every 0.5s
     return () => clearInterval(interval);
   }, []);
@@ -40,6 +41,37 @@ export default function SidebarSummary() {
 
   const popularityScore = calculatePopularityScore();
 
+  // Calculate Recommended Resources
+  const calculateRecommendedResources = () => {
+    return {
+      toilets: Math.ceil(attendance / 75), // 1 toilet per 75 attendees
+      foodVendors: Math.ceil(attendance / 250), // 1 food vendor per 250 attendees
+      staff: Math.ceil(attendance / 100), // 1 staff member per 100 attendees
+    };
+  };
+
+  const recommendedResources = calculateRecommendedResources();
+
+  // Compare Current and Recommended Resources
+  const resourceInsights = AMENITIES.map((amenity) => {
+    const current = amenities[amenity.id] || 0;
+    const recommended =
+      amenity.name === 'Toilets'
+        ? recommendedResources.toilets
+        : amenity.name === 'Food Vendor'
+        ? recommendedResources.foodVendors
+        : amenity.name === 'Staff Member'
+        ? recommendedResources.staff
+        : 0;
+
+    return {
+      name: amenity.name,
+      current,
+      recommended,
+      status: current < recommended ? 'shortage' : current > recommended ? 'excess' : 'optimal',
+    };
+  });
+
   return (
     <aside className="bg-white shadow-md p-4 rounded-lg border border-gray-100 w-full md:w-72 sticky top-6 md:self-start">
       <h3 className="text-xl font-semibold text-indigo-700 mb-4">📋 Festival Summary</h3>
@@ -58,6 +90,29 @@ export default function SidebarSummary() {
 
         {/* Weather Impact */}
         <li className="pt-2 border-t border-gray-200">🌤 <strong>Current Weather:</strong> {weather}</li>
+
+        {/* Resource Optimization */}
+        <li className="pt-2 border-t border-gray-200">
+          🛠️ <strong>Resource Optimization:</strong>
+          <ul className="mt-2 space-y-1">
+            {resourceInsights.map((insight, index) => (
+              <li key={index} className="flex justify-between">
+                <span>{insight.name}:</span>
+                <span
+                  className={`font-medium ${
+                    insight.status === 'shortage'
+                      ? 'text-red-600'
+                      : insight.status === 'excess'
+                      ? 'text-yellow-600'
+                      : 'text-green-600'
+                  }`}
+                >
+                  {insight.current} / {insight.recommended} ({insight.status})
+                </span>
+              </li>
+            ))}
+          </ul>
+        </li>
       </ul>
     </aside>
   );

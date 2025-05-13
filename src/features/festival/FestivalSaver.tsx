@@ -2,13 +2,11 @@
 import { useState } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { saveFestival, getSavedFestivals } from '../../utils/saveUtils';
-import { useFestival } from '../../context/FestivalContext';
 import type {Festival} from './types';
 export default function FestivalSaver() {
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(getSavedFestivals());
   const [currentFestival, setCurrentFestival] = useState<Festival | null>(null);
-  const { triggerReload } = useFestival();
 
   const handleSave = () => {
     if (name.trim()) {
@@ -65,7 +63,6 @@ const loadFestival = (festival: Festival) => {
   localStorage.setItem('saved-events', JSON.stringify(loadedFestival.events));
 
   setCurrentFestival(loadedFestival);
-  triggerReload();
 };
 
   return (

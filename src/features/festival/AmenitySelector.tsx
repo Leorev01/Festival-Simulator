@@ -13,9 +13,10 @@ export default function AmenitySelector() {
 
   const applySuggestions = () => {
     const suggested = {
-      1: Math.ceil(attendance / 75),   // Toilets
-      2: Math.ceil(attendance / 250),  // Food Vendors
-      3: Math.ceil(attendance / 100),  // Staff
+      1: Math.ceil(attendance / 75), // Toilets
+      2: Math.ceil(attendance / 250), // Food Vendors
+      3: Math.ceil(attendance / 100), // Staff
+      4: Math.ceil(attendance / 500), // Speakers
     };
     setSelection((prev) => ({ ...prev, ...suggested }));
   };

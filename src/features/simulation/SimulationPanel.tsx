@@ -11,6 +11,7 @@ interface SimulationPanelProps {
 
 export default function SimulationPanel({ ticketCategories }: SimulationPanelProps) {
   const [weather, setWeather] = useState<'Sunny' | 'Rainy' | 'Windy'>('Sunny');
+  const [weatherHistory, setWeatherHistory] = useState<string[]>([]); // Track weather history
   const [metrics, setMetrics] = useState({
     attendance: 0,
     revenue: 0,
@@ -35,6 +36,17 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
+  // Update metrics whenever weather changes
+  useEffect(() => {
+    const updatedAttendance = calculateAttendance();
+    const updatedEnergyUsage = calculateEnergyUsage();
+    setMetrics((prev) => ({
+      ...prev,
+      attendance: updatedAttendance,
+      energyUsage: updatedEnergyUsage,
+    }));
+  }, [weather]);
+
   // Calculate attendance based on weather
   const calculateAttendance = () => {
     const baseAttendance = 10000; // Example base attendance
@@ -58,17 +70,6 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     setMetrics((prev) => ({ ...prev, revenue: totalRevenue }));
   };
 
-  // Update metrics whenever weather changes
-  useEffect(() => {
-    const updatedAttendance = calculateAttendance();
-    const updatedEnergyUsage = calculateEnergyUsage();
-    setMetrics((prev) => ({
-      ...prev,
-      attendance: updatedAttendance,
-      energyUsage: updatedEnergyUsage,
-    }));
-  }, [weather]);
-
   // Recalculate revenue whenever ticket categories or attendance changes
   useEffect(() => {
     calculateRevenue();
@@ -81,6 +82,18 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
   const staff = amenities[3] || 0;
 
   const totalEnergy = metrics.energyUsage;
+
+  // Handle weather history updates
+  const handleWeatherHistoryUpdate = (isRunning: boolean) => {
+    if (isRunning) {
+      setWeatherHistory((prev) => [...prev, weather]);
+    }
+  };
+
+  // Handle weather history reset
+  const handleWeatherHistoryReset = () => {
+    setWeatherHistory([]);
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg space-y-6">
@@ -111,6 +124,18 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
         </ul>
       </div>
 
+      {/* Weather History Section */}
+      <div className="bg-gray-50 p-4 rounded-lg border">
+        <h3 className="text-xl font-bold text-gray-700">📜 Weather History</h3>
+        <ul className="list-disc list-inside text-gray-700 mt-2">
+          {weatherHistory.map((w, index) => (
+            <li key={index}>
+              {index + 1}. {w}
+            </li>
+          ))}
+        </ul>
+      </div>
+
       {/* Real-Time Simulation Section */}
       <div>
         <h3 className="text-xl font-bold text-gray-700">⏱️ Real-Time Simulation</h3>
@@ -119,6 +144,8 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
           weather={weather}
           weatherModifiers={weatherModifiers[weather]}
           onUpdate={(updatedMetrics) => setMetrics(updatedMetrics)}
+          onWeatherHistoryUpdate={handleWeatherHistoryUpdate}
+          onReset={handleWeatherHistoryReset}
         />
       </div>
 

@@ -9,6 +9,8 @@ interface RealTimeSimulatorProps {
     attendanceMultiplier: number;
     energyMultiplier: number;
   }; // Weather modifiers
+  onWeatherHistoryUpdate: (isRunning: boolean, weather: string) => void; // Callback to update weather history
+  onReset: () => void; // Callback to reset weather history
 }
 
 export default function RealTimeSimulator({
@@ -16,9 +18,12 @@ export default function RealTimeSimulator({
   onUpdate,
   weather,
   weatherModifiers,
+  onWeatherHistoryUpdate,
+  onReset,
 }: RealTimeSimulatorProps) {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [lastWeather, setLastWeather] = useState<string | null>(null); // Track the last recorded weather
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -35,6 +40,7 @@ export default function RealTimeSimulator({
         });
       }, 1000); // Simulate 1 hour per second
     }
+
     return () => clearInterval(interval!);
   }, [isRunning, duration]);
 
@@ -43,6 +49,14 @@ export default function RealTimeSimulator({
     const metrics = calculateMetrics(time, duration, weatherModifiers);
     onUpdate(metrics);
   }, [time, duration, weatherModifiers, onUpdate]);
+
+  useEffect(() => {
+    // Add to weather history only if the weather changes and the simulator is running
+    if (isRunning && weather !== lastWeather) {
+      onWeatherHistoryUpdate(isRunning, weather);
+      setLastWeather(weather); // Update the last recorded weather
+    }
+  }, [isRunning, weather, lastWeather, onWeatherHistoryUpdate]);
 
   const calculateMetrics = (
     currentTime: number,
@@ -55,6 +69,13 @@ export default function RealTimeSimulator({
     const revenue = adjustedAttendance * 50; // Assume $50 per attendee
     const energyUsage = adjustedAttendance * 0.1 * modifiers.energyMultiplier; // Adjust energy usage based on weather
     return { attendance: adjustedAttendance, revenue, energyUsage };
+  };
+
+  const handleReset = () => {
+    setTime(0);
+    setIsRunning(false);
+    setLastWeather(null); // Reset the last recorded weather
+    onReset(); // Notify parent component to reset weather history
   };
 
   return (
@@ -76,7 +97,7 @@ export default function RealTimeSimulator({
           ⏸ Pause
         </button>
         <button
-          onClick={() => setTime(0)}
+          onClick={handleReset}
           className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
         >
           🔄 Reset

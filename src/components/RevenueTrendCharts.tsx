@@ -5,9 +5,9 @@ interface RevenueTrendChartProps {
   amenities: Record<number, number>;
 }
 
-const attendanceByDay = [50000, 60000, 40000];
-const ticketPrice = 100;
-const vendorBaseRevenue = 500;
+const attendanceByDay = [150000, 160000, 140000]; // Example attendance data for 3 days
+const ticketPrice = 100; // Ticket price per attendee
+const vendorBaseRevenue = 500; // Base revenue per vendor
 
 const weatherModifiers = {
   Sunny: { vendorMultiplier: 1.0 },
@@ -17,7 +17,7 @@ const weatherModifiers = {
 
 export default function RevenueTrendChart({ weather, amenities }: RevenueTrendChartProps) {
   const foodVendors = amenities[2] || 0;
-  const vendorMultiplier = weatherModifiers[weather].vendorMultiplier;
+  const vendorMultiplier = weatherModifiers[weather]?.vendorMultiplier || 1.0;
 
   const data = attendanceByDay.map((attendance, i) => {
     const ticketRevenue = attendance * ticketPrice;
@@ -31,20 +31,17 @@ export default function RevenueTrendChart({ weather, amenities }: RevenueTrendCh
   });
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border mt-10">
-      <h3 className="text-xl font-bold text-indigo-700 mb-4">📈 Revenue Trend (3 Days)</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="ticketRevenue" stroke="#4ade80" name="Ticket Revenue" />
-          <Line type="monotone" dataKey="vendorRevenue" stroke="#facc15" name="Vendor Revenue" />
-          <Line type="monotone" dataKey="total" stroke="#60a5fa" strokeWidth={2} name="Total Revenue" />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="day" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="ticketRevenue" stroke="#4ade80" name="Ticket Revenue" />
+        <Line type="monotone" dataKey="vendorRevenue" stroke="#facc15" name="Vendor Revenue" />
+        <Line type="monotone" dataKey="total" stroke="#60a5fa" strokeWidth={2} name="Total Revenue" />
+      </LineChart>
+    </ResponsiveContainer>
   );
 }

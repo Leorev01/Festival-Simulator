@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {useNavigate} from 'react-router-dom';
@@ -8,10 +9,16 @@ import SimulationPanel from '../features/simulation/SimulationPanel';
 import SummaryPanel from '../features/festival/SummaryPanel';
 import FestivalSaver from '../features/festival/FestivalSaver';
 import SidebarSummary from '../components/SidebarSummary';
+import FestivalConfigurationPanel from '../features/festival/FestivalConfigurationPanel';
 
 const tabs = ['Builder', 'Simulation', 'Summary'];
 
-export default function FestivalBuilder() {
+interface FestivalBuilderProps {
+  ticketCategories: any[]; // Replace 'any[]' with the appropriate type if known
+  onTicketCategoriesUpdate: (updatedCategories: any[]) => void; // Replace 'any[]' with the appropriate type if known
+}
+
+export default function FestivalBuilder({ ticketCategories, onTicketCategoriesUpdate }: FestivalBuilderProps) {
   const [activeTab, setActiveTab] = useState('Builder');
   const navigate = useNavigate();
 
@@ -40,6 +47,11 @@ export default function FestivalBuilder() {
         >
           <div className="flex-1 space-y-12">
             <section>
+              <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎪 Ticket Categories</h2>
+              <p className="text-sm text-gray-500 mb-4">Set ticket prices and percentages for each category.</p>
+              <FestivalConfigurationPanel onTicketCategoriesUpdate={onTicketCategoriesUpdate} />
+            </section>
+            <section>
               <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎤 Artist Selection</h2>
               <p className="text-sm text-gray-500 mb-4">Choose performers for your festival.</p>
               <ArtistSelector />
@@ -60,7 +72,7 @@ export default function FestivalBuilder() {
       );
 
       case 'Simulation':
-        return <SimulationPanel />;
+        return <SimulationPanel ticketCategories={ticketCategories}/>;
       case 'Summary':
         return (
           <motion.div className="space-y-6"

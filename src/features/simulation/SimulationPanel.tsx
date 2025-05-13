@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RevenueTrendChart from '../../components/RevenueTrendCharts';
 import CrowdHealthScore from '../../components/CrowdHealthScore';
 import EnvironmentalImpactScore from '../../components/EnvironmentalImpactScore';
 import RealTimeSimulator from './RealTimeSimulator';
-export default function SimulationPanel() {
+
+interface SimulationPanelProps {
+  ticketCategories: { name: string; price: number; percentage: number }[];
+}
+
+export default function SimulationPanel({ ticketCategories }: SimulationPanelProps) {
   const [weather, setWeather] = useState<'Sunny' | 'Rainy' | 'Windy'>('Sunny');
   const [metrics, setMetrics] = useState({
     attendance: 0,
@@ -12,10 +17,58 @@ export default function SimulationPanel() {
     energyUsage: 0,
   });
 
+  // Weather modifiers
+  const weatherModifiers = {
+    Sunny: { attendanceMultiplier: 1.0, energyMultiplier: 1.0 },
+    Rainy: { attendanceMultiplier: 0.8, energyMultiplier: 1.3 },
+    Windy: { attendanceMultiplier: 0.9, energyMultiplier: 1.1 },
+  };
+
+  // Calculate attendance based on weather
+  const calculateAttendance = () => {
+    const baseAttendance = 10000; // Example base attendance
+    const attendanceMultiplier = weatherModifiers[weather].attendanceMultiplier;
+    return baseAttendance * attendanceMultiplier;
+  };
+
+  // Calculate energy usage based on weather
+  const calculateEnergyUsage = () => {
+    const baseEnergy = 500; // Example base energy usage
+    const energyMultiplier = weatherModifiers[weather].energyMultiplier;
+    return baseEnergy * energyMultiplier;
+  };
+
+  // Calculate revenue based on ticket categories and attendance
+  const calculateRevenue = () => {
+    const totalRevenue = ticketCategories.reduce((sum, category) => {
+      const attendees = (metrics.attendance * category.percentage) / 100;
+      return sum + attendees * category.price;
+    }, 0);
+    setMetrics((prev) => ({ ...prev, revenue: totalRevenue }));
+  };
+
+  // Update metrics whenever weather changes
+  useEffect(() => {
+    const updatedAttendance = calculateAttendance();
+    const updatedEnergyUsage = calculateEnergyUsage();
+    setMetrics((prev) => ({
+      ...prev,
+      attendance: updatedAttendance,
+      energyUsage: updatedEnergyUsage,
+    }));
+  }, [weather]);
+
+  // Recalculate revenue whenever ticket categories or attendance changes
+  useEffect(() => {
+    calculateRevenue();
+  }, [ticketCategories, metrics.attendance]);
+
+  // Handle updates from the RealTimeSimulator
   const handleUpdate = (updatedMetrics: any) => {
     setMetrics(updatedMetrics);
   };
 
+  // Retrieve amenities data from localStorage
   const amenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
   const toilets = amenities[1] || 0;
   const food = amenities[2] || 0;
@@ -40,7 +93,7 @@ export default function SimulationPanel() {
           <option>Windy</option>
         </select>
         <p className="text-xs text-gray-500 mt-1">
-          Weather affects vendor revenue and staff requirements.
+          Weather affects attendance, energy usage, and vendor revenue.
         </p>
       </div>
 
@@ -63,7 +116,7 @@ export default function SimulationPanel() {
         </div>
       </div>
 
-      {/* ✅ Crowd Health Score */}
+      {/* Crowd Health Score */}
       <CrowdHealthScore
         attendance={metrics.attendance}
         toilets={toilets}

@@ -10,6 +10,11 @@ import CompareFestivals from './pages/CompareFestivals';
 function App() {
 
   const [loading, setLoading] = useState(true);
+  const [ticketCategories, setTicketCategories] = useState([
+    { name: 'General Admission', price: 50, percentage: 70 },
+    { name: 'VIP', price: 150, percentage: 20 },
+    { name: 'Early Bird', price: 30, percentage: 10 },
+  ]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(false), 1000); // 1 second delay
@@ -23,7 +28,10 @@ function App() {
       <Route path='/' element={<Navigate to ='/login' />} />
       <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<Dashboard />} />
-      <Route path="/builder" element={<FestivalBuilder />} />
+      <Route path="/builder" element={<FestivalBuilder
+      ticketCategories={ticketCategories}
+      onTicketCategoriesUpdate={setTicketCategories}
+    />} />
       <Route path='/compare' element={<CompareFestivals />} />
     </Routes>
   );

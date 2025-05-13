@@ -75,6 +75,15 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     calculateRevenue();
   }, [ticketCategories, metrics.attendance]);
 
+  // Calculate estimated revenue based on ticket categories and expected attendance
+  const calculateEstimatedRevenue = () => {
+    const expectedAttendance = 500000; // Default expected attendance
+    return ticketCategories.reduce((sum, category) => {
+      const attendees = (expectedAttendance * category.percentage) / 100;
+      return sum + attendees * category.price;
+    }, 0);
+  };
+
   // Retrieve amenities data from localStorage
   const amenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
   const toilets = amenities[1] || 0;
@@ -143,6 +152,7 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
           duration={24}
           weather={weather}
           weatherModifiers={weatherModifiers[weather]}
+          ticketCategories={ticketCategories}
           onUpdate={(updatedMetrics) => setMetrics(updatedMetrics)}
           onWeatherHistoryUpdate={handleWeatherHistoryUpdate}
           onReset={handleWeatherHistoryReset}
@@ -189,6 +199,17 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
       <div>
         <h3 className="text-xl font-bold text-gray-700">📈 Revenue Trend</h3>
         <RevenueTrendChart weather={weather} amenities={amenities} />
+      </div>
+
+      {/* Expected Revenue Section */}
+      <div className="bg-gray-50 p-4 rounded-lg border mt-6">
+        <h3 className="text-xl font-bold text-gray-700">💵 Expected Revenue</h3>
+        <p className="text-sm text-gray-600">
+          Based on your ticket categories and expected attendance, the expected revenue is:
+        </p>
+        <p className="text-2xl font-semibold text-green-700 mt-2">
+          ${calculateEstimatedRevenue().toLocaleString()}
+        </p>
       </div>
 
       {/* Environmental Impact Section */}

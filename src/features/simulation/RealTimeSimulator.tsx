@@ -11,6 +11,7 @@ interface RealTimeSimulatorProps {
   }; // Weather modifiers
   onWeatherHistoryUpdate: (isRunning: boolean, weather: string) => void; // Callback to update weather history
   onReset: () => void; // Callback to reset weather history
+  ticketCategories: { name: string; price: number; percentage: number }[]; // Ticket categories
 }
 
 export default function RealTimeSimulator({
@@ -20,6 +21,7 @@ export default function RealTimeSimulator({
   weatherModifiers,
   onWeatherHistoryUpdate,
   onReset,
+  ticketCategories,
 }: RealTimeSimulatorProps) {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -45,10 +47,10 @@ export default function RealTimeSimulator({
   }, [isRunning, duration]);
 
   useEffect(() => {
-    // Update metrics based on the current time and weather
-    const metrics = calculateMetrics(time, duration, weatherModifiers);
+    // Update metrics based on the current time, weather, and ticket categories
+    const metrics = calculateMetrics(time, duration, weatherModifiers, ticketCategories);
     onUpdate(metrics);
-  }, [time, duration, weatherModifiers, onUpdate]);
+  }, [time, duration, weatherModifiers, ticketCategories, onUpdate]);
 
   useEffect(() => {
     // Add to weather history only if the weather changes and the simulator is running
@@ -61,13 +63,22 @@ export default function RealTimeSimulator({
   const calculateMetrics = (
     currentTime: number,
     totalDuration: number,
-    modifiers: { attendanceMultiplier: number; energyMultiplier: number }
+    modifiers: { attendanceMultiplier: number; energyMultiplier: number },
+    ticketCategories: { name: string; price: number; percentage: number }[]
   ) => {
-    // Example logic for dynamic metrics influenced by weather
-    const baseAttendance = Math.min(5000, Math.floor((currentTime / totalDuration) * 10000)); // Simulate attendance growth
+    // Simulate attendance growth
+    const baseAttendance = Math.min(500000, Math.floor((currentTime / totalDuration) * 1000000));
     const adjustedAttendance = Math.floor(baseAttendance * modifiers.attendanceMultiplier); // Adjust based on weather
-    const revenue = adjustedAttendance * 50; // Assume $50 per attendee
+
+    // Calculate revenue based on ticket categories
+    const revenue = ticketCategories.reduce((sum, category) => {
+      const attendees = (adjustedAttendance * category.percentage) / 100; // Calculate attendees for this category
+      return sum + attendees * category.price; // Add revenue for this category
+    }, 0);
+
+    // Calculate energy usage
     const energyUsage = adjustedAttendance * 0.1 * modifiers.energyMultiplier; // Adjust energy usage based on weather
+
     return { attendance: adjustedAttendance, revenue, energyUsage };
   };
 

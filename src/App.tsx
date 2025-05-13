@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react';
 import LoadingScreen from './components/LoadingScreen';
 import FestivalBuilder from './pages/FestivalBuilder';
 import CompareFestivals from './pages/CompareFestivals';
+import PerformanceDashboard from './pages/PerformanceDashboard';
 
 function App() {
 
@@ -29,9 +30,10 @@ function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path="/builder" element={<FestivalBuilder
-      ticketCategories={ticketCategories}
-      onTicketCategoriesUpdate={setTicketCategories}
-    />} />
+        ticketCategories={ticketCategories}
+        onTicketCategoriesUpdate={setTicketCategories}
+      />} />
+      <Route path="/dashboard/performance" element={<PerformanceDashboard />} />
       <Route path='/compare' element={<CompareFestivals />} />
     </Routes>
   );

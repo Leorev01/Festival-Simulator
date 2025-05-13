@@ -73,24 +73,35 @@ export default function FestivalBuilder({ ticketCategories, onTicketCategoriesUp
 
       case 'Simulation':
         return <SimulationPanel ticketCategories={ticketCategories}/>;
-      case 'Summary':
-        return (
-          <motion.div className="space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <SummaryPanel />
-            <button onClick={() => navigate('/compare')} className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition cursor-pointer">
+     case 'Summary':
+      return (
+        <motion.div className="space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <SummaryPanel />
+          <div className="flex gap-4">
+            <button
+              onClick={() => navigate('/compare')}
+              className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition cursor-pointer"
+            >
               Compare Setups
             </button>
-            <section>
-              <h2 className="text-2xl font-bold text-indigo-700">💾 Save or Export</h2>
-              <p className="text-sm text-gray-500 mb-4">Save your setup for later or export it as JSON.</p>
-              <FestivalSaver />
-            </section>
-          </motion.div>
-        );
+            <button
+              onClick={() => navigate('/dashboard/performance')}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+            >
+              View Performance Dashboard
+            </button>
+          </div>
+          <section>
+            <h2 className="text-2xl font-bold text-indigo-700">💾 Save or Export</h2>
+            <p className="text-sm text-gray-500 mb-4">Save your setup for later or export it as JSON.</p>
+            <FestivalSaver />
+          </section>
+        </motion.div>
+      );
       default:
         return null;
     }

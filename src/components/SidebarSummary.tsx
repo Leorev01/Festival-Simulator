@@ -7,7 +7,7 @@ export default function SidebarSummary() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [amenities, setAmenities] = useState<Record<number, number>>({});
   const [weather, setWeather] = useState<string>('Sunny'); // Current weather
-  const [attendance, setAttendance] = useState<number>(5000); // Expected attendance
+  const [attendance, setAttendance] = useState<number>(500000); // Expected attendance
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -15,7 +15,7 @@ export default function SidebarSummary() {
       setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
       setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
       setWeather(localStorage.getItem('current-weather') || 'Sunny'); // Fetch current weather
-      setAttendance(Number(localStorage.getItem('expected-attendance')) || 5000); // Fetch expected attendance
+      setAttendance(Number(localStorage.getItem('expected-attendance')) || 500000); // Fetch expected attendance
     }, 500); // auto-refresh every 0.5s
     return () => clearInterval(interval);
   }, []);

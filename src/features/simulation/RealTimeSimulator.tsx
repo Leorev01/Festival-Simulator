@@ -4,9 +4,19 @@ import { useState, useEffect } from 'react';
 interface RealTimeSimulatorProps {
   duration: number; // Duration of the festival in hours
   onUpdate: (metrics: any) => void; // Callback to update metrics
+  weather: 'Sunny' | 'Rainy' | 'Windy'; // Current weather
+  weatherModifiers: {
+    attendanceMultiplier: number;
+    energyMultiplier: number;
+  }; // Weather modifiers
 }
 
-export default function RealTimeSimulator({ duration, onUpdate }: RealTimeSimulatorProps) {
+export default function RealTimeSimulator({
+  duration,
+  onUpdate,
+  weather,
+  weatherModifiers,
+}: RealTimeSimulatorProps) {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -29,23 +39,29 @@ export default function RealTimeSimulator({ duration, onUpdate }: RealTimeSimula
   }, [isRunning, duration]);
 
   useEffect(() => {
-    // Update metrics based on the current time
-    const metrics = calculateMetrics(time, duration);
+    // Update metrics based on the current time and weather
+    const metrics = calculateMetrics(time, duration, weatherModifiers);
     onUpdate(metrics);
-  }, [time, duration, onUpdate]);
+  }, [time, duration, weatherModifiers, onUpdate]);
 
-  const calculateMetrics = (currentTime: number, totalDuration: number) => {
-    // Example logic for dynamic metrics
-    const attendance = Math.min(5000, Math.floor((currentTime / totalDuration) * 10000)); // Simulate attendance growth
-    const revenue = attendance * 50; // Assume $50 per attendee
-    const energyUsage = attendance * 0.1; // Assume 0.1 kWh per attendee
-    return { attendance, revenue, energyUsage };
+  const calculateMetrics = (
+    currentTime: number,
+    totalDuration: number,
+    modifiers: { attendanceMultiplier: number; energyMultiplier: number }
+  ) => {
+    // Example logic for dynamic metrics influenced by weather
+    const baseAttendance = Math.min(5000, Math.floor((currentTime / totalDuration) * 10000)); // Simulate attendance growth
+    const adjustedAttendance = Math.floor(baseAttendance * modifiers.attendanceMultiplier); // Adjust based on weather
+    const revenue = adjustedAttendance * 50; // Assume $50 per attendee
+    const energyUsage = adjustedAttendance * 0.1 * modifiers.energyMultiplier; // Adjust energy usage based on weather
+    return { attendance: adjustedAttendance, revenue, energyUsage };
   };
 
   return (
     <div className="bg-gray-100 p-4 rounded-lg shadow">
       <h3 className="text-lg font-bold text-indigo-700">🎡 Real-Time Simulation</h3>
       <p className="text-sm text-gray-600">Time: {time} / {duration} hours</p>
+      <p className="text-sm text-gray-600">Current Weather: {weather}</p>
       <div className="flex space-x-4 mt-4">
         <button
           onClick={() => setIsRunning(true)}

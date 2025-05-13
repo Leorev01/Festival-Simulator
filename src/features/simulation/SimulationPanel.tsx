@@ -24,6 +24,17 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     Windy: { attendanceMultiplier: 0.9, energyMultiplier: 1.1 },
   };
 
+  // Simulate random weather changes
+  useEffect(() => {
+    const weatherOptions: ('Sunny' | 'Rainy' | 'Windy')[] = ['Sunny', 'Rainy', 'Windy'];
+    const interval = setInterval(() => {
+      const randomWeather = weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
+      setWeather(randomWeather);
+    }, 10000); // Change weather every 10 seconds (for simulation purposes)
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
   // Calculate attendance based on weather
   const calculateAttendance = () => {
     const baseAttendance = 10000; // Example base attendance
@@ -63,11 +74,6 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     calculateRevenue();
   }, [ticketCategories, metrics.attendance]);
 
-  // Handle updates from the RealTimeSimulator
-  const handleUpdate = (updatedMetrics: any) => {
-    setMetrics(updatedMetrics);
-  };
-
   // Retrieve amenities data from localStorage
   const amenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
   const toilets = amenities[1] || 0;
@@ -80,55 +86,89 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     <div className="bg-white p-6 rounded-xl shadow-lg space-y-6">
       <h2 className="text-3xl font-bold text-indigo-700">📈 Festival Simulation</h2>
 
-      {/* Weather Selector */}
-      <div>
-        <label className="text-sm font-medium text-gray-700">Weather Condition</label>
-        <select
-          value={weather}
-          onChange={(e) => setWeather(e.target.value as any)}
-          className="block w-full mt-1 p-2 border rounded"
-        >
-          <option>Sunny</option>
-          <option>Rainy</option>
-          <option>Windy</option>
-        </select>
-        <p className="text-xs text-gray-500 mt-1">
-          Weather affects attendance, energy usage, and vendor revenue.
+      {/* Weather Section */}
+      <div className="bg-gray-100 p-4 rounded-lg border">
+        <h3 className="text-xl font-bold text-gray-700">🌤 Current Weather</h3>
+        <p className="text-lg font-semibold text-gray-800">{weather}</p>
+        <p className="text-sm text-gray-500">
+          Weather dynamically affects attendance, energy usage, and revenue.
         </p>
       </div>
 
-      {/* Real-Time Simulator */}
-      <RealTimeSimulator duration={24} onUpdate={handleUpdate} />
+      {/* Weather Impact Summary */}
+      <div className="bg-gray-50 p-4 rounded-lg border">
+        <h3 className="text-xl font-bold text-gray-700">🌦️ Weather Impact Summary</h3>
+        <p className="text-sm text-gray-600">
+          The current weather is affecting the following metrics:
+        </p>
+        <ul className="list-disc list-inside text-gray-700 mt-2">
+          <li>
+            <strong>Attendance Multiplier:</strong> {weatherModifiers[weather].attendanceMultiplier}
+          </li>
+          <li>
+            <strong>Energy Usage Multiplier:</strong> {weatherModifiers[weather].energyMultiplier}
+          </li>
+        </ul>
+      </div>
 
-      {/* Metrics Display */}
-      <div className="grid md:grid-cols-3 gap-4 mt-6">
-        <div className="bg-gray-50 p-4 rounded-lg border">
-          <h4 className="font-bold text-gray-700">👥 Attendance</h4>
-          <p className="text-2xl font-semibold text-gray-800">{metrics.attendance.toLocaleString()}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg border">
-          <h4 className="font-bold text-gray-700">💰 Revenue</h4>
-          <p className="text-2xl font-semibold text-gray-800">${metrics.revenue.toLocaleString()}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg border">
-          <h4 className="font-bold text-gray-700">⚡ Energy Usage</h4>
-          <p className="text-2xl font-semibold text-gray-800">{metrics.energyUsage.toFixed(2)} kWh</p>
+      {/* Real-Time Simulation Section */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-700">⏱️ Real-Time Simulation</h3>
+        <RealTimeSimulator
+          duration={24}
+          weather={weather}
+          weatherModifiers={weatherModifiers[weather]}
+          onUpdate={(updatedMetrics) => setMetrics(updatedMetrics)}
+        />
+      </div>
+
+      {/* Metrics Section */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-700">📊 Metrics Overview</h3>
+        <div className="grid md:grid-cols-3 gap-4 mt-4">
+          <div className="bg-gray-50 p-4 rounded-lg border">
+            <h4 className="font-bold text-gray-700">👥 Attendance</h4>
+            <p className="text-2xl font-semibold text-gray-800">
+              {metrics.attendance.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg border">
+            <h4 className="font-bold text-gray-700">💰 Total Revenue</h4>
+            <p className="text-2xl font-semibold text-gray-800">
+              ${metrics.revenue.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg border">
+            <h4 className="font-bold text-gray-700">⚡ Energy Usage</h4>
+            <p className="text-2xl font-semibold text-gray-800">
+              {metrics.energyUsage.toFixed(2)} kWh
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Crowd Health Score */}
-      <CrowdHealthScore
-        attendance={metrics.attendance}
-        toilets={toilets}
-        foodVendors={food}
-        staff={staff}
-      />
+      {/* Crowd Health Section */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-700">✅ Crowd Health Score</h3>
+        <CrowdHealthScore
+          attendance={metrics.attendance}
+          toilets={toilets}
+          foodVendors={food}
+          staff={staff}
+        />
+      </div>
 
-      {/* Revenue Trend Chart */}
-      <RevenueTrendChart weather={weather} amenities={amenities} />
+      {/* Revenue Trend Section */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-700">📈 Revenue Trend</h3>
+        <RevenueTrendChart weather={weather} amenities={amenities} />
+      </div>
 
-      {/* Environmental Impact */}
-      <EnvironmentalImpactScore totalEnergy={totalEnergy} />
+      {/* Environmental Impact Section */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-700">🌍 Environmental Impact</h3>
+        <EnvironmentalImpactScore totalEnergy={totalEnergy} />
+      </div>
     </div>
   );
 }

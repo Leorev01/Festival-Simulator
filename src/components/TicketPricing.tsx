@@ -12,11 +12,21 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
     { name: 'VIP', price: 150, percentage: 20 },
     { name: 'Early Bird', price: 30, percentage: 10 },
   ]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCategoryChange = (index: number, field: keyof TicketCategory, value: number | string) => {
     const updatedCategories = [...categories];
     updatedCategories[index] = { ...updatedCategories[index], [field]: value };
     setCategories(updatedCategories);
+
+    // Validate total percentage
+    const totalPercentage = updatedCategories.reduce((sum, category) => sum + category.percentage, 0);
+    if (totalPercentage > 100) {
+      setError('The total percentage of attendees cannot exceed 100%.');
+    } else {
+      setError(null);
+    }
+
     onUpdate(updatedCategories);
   };
 
@@ -27,6 +37,15 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
   const removeCategory = (index: number) => {
     const updatedCategories = categories.filter((_, i) => i !== index);
     setCategories(updatedCategories);
+
+    // Validate total percentage after removal
+    const totalPercentage = updatedCategories.reduce((sum, category) => sum + category.percentage, 0);
+    if (totalPercentage > 100) {
+      setError('The total percentage of attendees cannot exceed 100%.');
+    } else {
+      setError(null);
+    }
+
     onUpdate(updatedCategories);
   };
 
@@ -79,6 +98,8 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
           </div>
         </div>
       ))}
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <button
         onClick={addCategory}

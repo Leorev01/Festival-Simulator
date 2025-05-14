@@ -6,20 +6,29 @@ export default function SidebarSummary() {
   const { artists, stages, amenities, attendance } = useFestival();
   const [weather, setWeather] = useState<string>('Sunny'); // Current weather
 
+  // Fetch current weather from localStorage and auto-refresh every 0.5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setWeather(localStorage.getItem('current-weather') || 'Sunny'); // Fetch current weather
-    }, 500); // auto-refresh every 0.5s
+      setWeather(localStorage.getItem('current-weather') || 'Sunny');
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 
-  const artistCost = artists.reduce((sum, a) => sum + a.cost, 0);
-  const stageCost = stages.reduce((sum, s) => sum + s.cost, 0);
-  const amenityCost = AMENITIES.reduce((sum, a) => (amenities[a.id] || 0) * a.costPerUnit + sum, 0);
+  // Calculate costs
+  const artistCost = artists.reduce((sum, artist) => sum + artist.cost, 0);
+  const stageCost = stages.reduce((sum, stage) => sum + stage.cost, 0);
+  const amenityCost = AMENITIES.reduce(
+    (sum, amenity) => (amenities[amenity.id] || 0) * amenity.costPerUnit + sum,
+    0
+  );
 
-  const artistEnergy = artists.reduce((sum, a) => sum + a.energy, 0);
-  const stageEnergy = stages.reduce((sum, s) => sum + s.energy, 0);
-  const amenityEnergy = AMENITIES.reduce((sum, a) => (amenities[a.id] || 0) * a.energyPerUnit + sum, 0);
+  // Calculate energy usage
+  const artistEnergy = artists.reduce((sum, artist) => sum + artist.energy, 0);
+  const stageEnergy = stages.reduce((sum, stage) => sum + stage.energy, 0);
+  const amenityEnergy = AMENITIES.reduce(
+    (sum, amenity) => (amenities[amenity.id] || 0) * amenity.energyPerUnit + sum,
+    0
+  );
 
   const totalCost = artistCost + stageCost + amenityCost;
   const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
@@ -28,20 +37,21 @@ export default function SidebarSummary() {
   const calculatePopularityScore = () => {
     const artistPopularity = artists.length * 10; // Each artist adds 10 points
     const stagePopularity = stages.reduce((sum, stage) => sum + stage.capacity / 1000, 0); // Larger stages add more points
-    const amenityPopularity = Object.values(amenities).reduce((sum, count) => sum + count * 5, 0); // Each amenity adds 5 points per unit
-    return Math.round(artistPopularity + stagePopularity + amenityPopularity);
+    const amenityPopularity = Object.values(amenities).reduce(
+      (sum, count) => sum + count * 5,
+      0
+    ); // Each amenity adds 5 points per unit
+    return Math.min(100, Math.round(artistPopularity + stagePopularity + amenityPopularity)); // Cap at 100
   };
 
   const popularityScore = calculatePopularityScore();
 
   // Calculate Recommended Resources
-  const calculateRecommendedResources = () => {
-    return {
-      toilets: Math.ceil(attendance / 75), // 1 toilet per 75 attendees
-      foodVendors: Math.ceil(attendance / 250), // 1 food vendor per 250 attendees
-      staff: Math.ceil(attendance / 100), // 1 staff member per 100 attendees
-    };
-  };
+  const calculateRecommendedResources = () => ({
+    toilets: Math.ceil(attendance / 75), // 1 toilet per 75 attendees
+    foodVendors: Math.ceil(attendance / 250), // 1 food vendor per 250 attendees
+    staff: Math.ceil(attendance / 100), // 1 staff member per 100 attendees
+  });
 
   const recommendedResources = calculateRecommendedResources();
 

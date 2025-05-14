@@ -13,12 +13,7 @@ import TicketPricing from '../components/TicketPricing';
 
 const tabs = ['Builder', 'Simulation', 'Summary'];
 
-interface FestivalBuilderProps {
-  ticketCategories: any[]; // Replace 'any[]' with the appropriate type if known
-  onTicketCategoriesUpdate: (updatedCategories: any[]) => void; // Replace 'any[]' with the appropriate type if known
-}
-
-export default function FestivalBuilder({ ticketCategories }: FestivalBuilderProps) {
+export default function FestivalBuilder() {
   const [activeTab, setActiveTab] = useState('Builder');
   const navigate = useNavigate();
 
@@ -72,7 +67,7 @@ export default function FestivalBuilder({ ticketCategories }: FestivalBuilderPro
       );
 
       case 'Simulation':
-        return <SimulationPanel ticketCategories={ticketCategories}/>;
+        return <SimulationPanel />;
      case 'Summary':
       return (
         <motion.div className="space-y-6"

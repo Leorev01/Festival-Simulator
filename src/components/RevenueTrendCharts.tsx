@@ -7,11 +7,10 @@ interface RevenueTrendChartProps {
     foodVendors: number;
     staff: number;
   };
+  ticketRevenue: number; // Pre-calculated ticket revenue value
 }
 
-const attendanceByDay = [150000, 160000, 140000]; // Example attendance data for 3 days
-const ticketPrice = 100; // Ticket price per attendee
-const vendorBaseRevenue = 500; // Base revenue per vendor
+const vendorBaseRevenue = 500; // Base revenue per vendor per day
 
 const weatherModifiers = {
   Sunny: { vendorMultiplier: 1.0 },
@@ -19,20 +18,27 @@ const weatherModifiers = {
   Windy: { vendorMultiplier: 0.5 },
 };
 
-export default function RevenueTrendChart({ weather, amenities }: RevenueTrendChartProps) {
+export default function RevenueTrendChart({ weather, amenities, ticketRevenue }: RevenueTrendChartProps) {
   const foodVendors = amenities.foodVendors || 0;
   const vendorMultiplier = weatherModifiers[weather]?.vendorMultiplier || 1.0;
 
-  const data = attendanceByDay.map((attendance, i) => {
-    const ticketRevenue = attendance * ticketPrice;
+  // Debugging: Log the ticket revenue being passed
+  console.log('Ticket Revenue:', ticketRevenue);
+
+  // Generate revenue data for 3 days using the provided ticketRevenue
+  const data = Array.from({ length: 3 }, (_, i) => {
     const vendorRevenue = foodVendors * vendorBaseRevenue * vendorMultiplier;
+    const totalRevenue = (ticketRevenue || 0) + vendorRevenue; // Ensure valid calculation
     return {
       day: `Day ${i + 1}`,
-      ticketRevenue,
-      vendorRevenue,
-      total: ticketRevenue + vendorRevenue,
+      ticketRevenue: ticketRevenue || 0, // Default to 0 if undefined
+      vendorRevenue: vendorRevenue || 0, // Default to 0 if undefined
+      total: totalRevenue || 0, // Default to 0 if undefined
     };
   });
+
+  // Debugging: Log the data being passed to the chart
+  console.log('RevenueTrendChart data:', data);
 
   return (
     <ResponsiveContainer width="100%" height={300}>

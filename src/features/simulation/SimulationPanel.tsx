@@ -1,23 +1,13 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useFestival } from '../../context/FestivalContext';
 import RevenueTrendChart from '../../components/RevenueTrendCharts';
 import CrowdHealthScore from '../../components/CrowdHealthScore';
 import RealTimeSimulator from './RealTimeSimulator';
 
-interface SimulationPanelProps {
-  ticketCategories: { name: string; price: number; percentage: number }[];
-}
-
-export default function SimulationPanel({ ticketCategories }: SimulationPanelProps) {
+export default function SimulationPanel() {
   const [weather, setWeather] = useState<'Sunny' | 'Rainy' | 'Windy'>('Sunny');
   const [weatherHistory, setWeatherHistory] = useState<string[]>([]);
-  const [metrics, setMetrics] = useState({
-    attendance: 0,
-    revenue: 0,
-    energyUsage: 0,
-    ticketRevenue: 0,
-    vendorRevenue: 0,
-    totalRevenue: 0,
-  });
+  const { attendance, amenities, ticketCategories, realTimeMetrics, setRealTimeMetrics } = useFestival();
 
   // Memoize weather modifiers to avoid re-creation on every render
   const weatherModifiers = useMemo(
@@ -40,91 +30,6 @@ export default function SimulationPanel({ ticketCategories }: SimulationPanelPro
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
-  useEffect(() => {
-  const updatedAttendance = calculateAttendance();
-  const updatedEnergyUsage = calculateEnergyUsage();
-  const updatedTicketRevenue = calculateTicketRevenue(updatedAttendance);
-  const updatedVendorRevenue = calculateVendorRevenue(updatedAttendance);
-  const updatedTotalRevenue = updatedTicketRevenue + updatedVendorRevenue;
-
-  // Only update metrics if values have changed
-  setMetrics((prevMetrics) => {
-    const newMetrics = {
-      attendance: updatedAttendance,
-      revenue: updatedTotalRevenue,
-      energyUsage: updatedEnergyUsage,
-      ticketRevenue: updatedTicketRevenue,
-      vendorRevenue: updatedVendorRevenue,
-      totalRevenue: updatedTotalRevenue,
-    };
-
-    // Compare new metrics with previous metrics to avoid unnecessary updates
-    if (JSON.stringify(prevMetrics) !== JSON.stringify(newMetrics)) {
-      console.log('Metrics updated:', newMetrics);
-      return newMetrics;
-    }
-    return prevMetrics;
-  });
-}, [weather]); // Only depend on `weather`
-
-// Save metrics to localStorage when they change
-useEffect(() => {
-  if (metrics.attendance > 0 || metrics.revenue > 0) {
-    console.log('Saving metrics to localStorage:', metrics); // Debugging log
-    localStorage.setItem('real-time-metrics', JSON.stringify(metrics));
-  }
-}, [metrics]); // This is fine because it only saves to localStorage
-
-// Debugging logs for weather and metrics
-useEffect(() => {
-  console.log('Weather changed:', weather);
-  console.log('Metrics updated:', metrics);
-}, [weather]); // Removed `metrics` from here to avoid unnecessary triggers
-
-  // Calculate attendance based on weather
-  const calculateAttendance = () => {
-    const baseAttendance = 10000; // Example base attendance
-    const attendanceMultiplier = weatherModifiers[weather]?.attendanceMultiplier || 1.0;
-    return baseAttendance * attendanceMultiplier;
-  };
-
-  // Calculate energy usage based on weather
-  const calculateEnergyUsage = () => {
-    const baseEnergy = 500; // Example base energy usage
-    const energyMultiplier = weatherModifiers[weather]?.energyMultiplier || 1.0;
-    return baseEnergy * energyMultiplier;
-  };
-
-  // Calculate ticket revenue based on attendance
-  const calculateTicketRevenue = (attendance: number) => {
-    return ticketCategories.reduce((sum, category) => {
-      const attendees = (attendance * category.percentage) / 100;
-      return sum + attendees * category.price;
-    }, 0);
-  };
-
-  // Calculate vendor revenue based on attendance
-  const calculateVendorRevenue = (attendance: number) => {
-    const foodVendors = amenities.foodVendors || 0; // Use real value from amenities
-    const vendorRevenuePerAttendee = 5; // Example revenue per attendee
-    return foodVendors * vendorRevenuePerAttendee * attendance;
-  };
-
-  // Calculate estimated revenue based on ticket categories and expected attendance
-  const calculateEstimatedRevenue = () => {
-    const expectedAttendance = 500000; // Default expected attendance
-    return ticketCategories.reduce((sum, category) => {
-      const attendees = (expectedAttendance * category.percentage) / 100;
-      return sum + attendees * category.price;
-    }, 0);
-  };
-
-  // Retrieve amenities data from localStorage
-  const amenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
-  const toilets = amenities[1] || 0;
-  const food = amenities[2] || 0;
-  const staff = amenities[3] || 0;
-
   // Handle weather history updates
   const handleWeatherHistoryUpdate = (isRunning: boolean) => {
     if (isRunning) {
@@ -135,6 +40,26 @@ useEffect(() => {
   // Handle weather history reset
   const handleWeatherHistoryReset = () => {
     setWeatherHistory([]);
+  };
+
+  // Reset real-time metrics when the simulator is reset
+  const handleSimulatorReset = () => {
+    setRealTimeMetrics({
+      attendance: 0,
+      ticketRevenue: 0,
+      vendorRevenue: 0,
+      totalRevenue: 0,
+      energyUsage: 0,
+    });
+    handleWeatherHistoryReset();
+  };
+
+  // Calculate estimated revenue based on ticket categories and expected attendance
+  const calculateEstimatedRevenue = () => {
+    return ticketCategories.reduce((sum, category) => {
+      const attendees = (attendance * category.percentage) / 100;
+      return sum + attendees * category.price;
+    }, 0);
   };
 
   return (
@@ -153,9 +78,6 @@ useEffect(() => {
       {/* Weather Impact Summary */}
       <div className="bg-gray-50 p-4 rounded-lg border">
         <h3 className="text-xl font-bold text-gray-700">🌦️ Weather Impact Summary</h3>
-        <p className="text-sm text-gray-600">
-          The current weather is affecting the following metrics:
-        </p>
         <ul className="list-disc list-inside text-gray-700 mt-2">
           <li>
             <strong>Attendance Multiplier:</strong> {weatherModifiers[weather].attendanceMultiplier}
@@ -186,18 +108,8 @@ useEffect(() => {
           weather={weather}
           weatherModifiers={weatherModifiers[weather]}
           ticketCategories={ticketCategories}
-          onUpdate={(updatedMetrics) => {
-            setMetrics((prevMetrics) => {
-              // Only update metrics if values have changed
-              if (JSON.stringify(prevMetrics) !== JSON.stringify(updatedMetrics)) {
-                console.log('Metrics updated from RealTimeSimulator:', updatedMetrics);
-                return updatedMetrics;
-              }
-              return prevMetrics;
-            });
-          }}
           onWeatherHistoryUpdate={handleWeatherHistoryUpdate}
-          onReset={handleWeatherHistoryReset}
+          onReset={handleSimulatorReset}
         />
       </div>
 
@@ -208,19 +120,19 @@ useEffect(() => {
           <div className="bg-gray-50 p-4 rounded-lg border">
             <h4 className="font-bold text-gray-700">👥 Attendance</h4>
             <p className="text-2xl font-semibold text-gray-800">
-              {metrics.attendance.toLocaleString()}
+              {realTimeMetrics.attendance.toLocaleString()}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg border">
             <h4 className="font-bold text-gray-700">💰 Total Revenue</h4>
             <p className="text-2xl font-semibold text-gray-800">
-              ${metrics.revenue.toLocaleString()}
+              ${realTimeMetrics.totalRevenue.toLocaleString()}
             </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg border">
             <h4 className="font-bold text-gray-700">⚡ Energy Usage</h4>
             <p className="text-2xl font-semibold text-gray-800">
-              {metrics.energyUsage.toFixed(2)} kWh
+              {realTimeMetrics.energyUsage.toFixed(2)} kWh
             </p>
           </div>
         </div>
@@ -230,17 +142,25 @@ useEffect(() => {
       <div>
         <h3 className="text-xl font-bold text-gray-700">✅ Crowd Health Score</h3>
         <CrowdHealthScore
-          attendance={metrics.attendance}
-          toilets={toilets}
-          foodVendors={food}
-          staff={staff}
+          attendance={realTimeMetrics.attendance}
+          toilets={amenities[1] || 0}
+          foodVendors={amenities[2] || 0}
+          staff={amenities[3] || 0}
         />
       </div>
 
       {/* Revenue Trend Section */}
       <div>
         <h3 className="text-xl font-bold text-gray-700">📈 Revenue Trend</h3>
-        <RevenueTrendChart weather={weather} amenities={{ toilets, foodVendors: food, staff }} />
+        <RevenueTrendChart
+          weather={weather}
+          amenities={{
+            toilets: amenities[1] || 0,
+            foodVendors: amenities[2] || 0,
+            staff: amenities[3] || 0,
+          }}
+          ticketRevenue={realTimeMetrics.ticketRevenue}
+        />
       </div>
 
       {/* Expected Revenue Section */}

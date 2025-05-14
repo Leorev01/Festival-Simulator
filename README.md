@@ -35,7 +35,6 @@ Open http://localhost:5173 in your browser.
 festival-sim/
 ├── public/
 ├── src/
-│   ├── assets/             # Static files
 │   ├── components/         # Shared UI components
 |   ├── contexts/           # Context management
 │   ├── features/

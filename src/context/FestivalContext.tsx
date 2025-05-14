@@ -37,7 +37,14 @@ const FestivalContext = createContext<FestivalContextType | undefined>(undefined
 export const FestivalProvider = ({ children }: { children: React.ReactNode }) => {
   const [artists, setArtists] = useState<any[]>([]);
   const [stages, setStages] = useState<any[]>([]);
-  const [amenities, setAmenities] = useState<Record<number, number>>({});
+  const [amenities, setAmenities] = useState<Record<number, number>>({
+    1: 0, // Toilets
+    2: 0, // Food Vendors
+    3: 0, // Staff Members
+    4: 0, // Speakers
+    5: 0, // Parking
+    6: 0, // Security
+  });
   const [events, setEvents] = useState<string[]>([]);
   const [attendance, setAttendance] = useState<number>(500000); // Default attendance
   const [ticketCategories, setTicketCategories] = useState<TicketCategory[]>([
@@ -59,7 +66,16 @@ export const FestivalProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     setArtists(JSON.parse(localStorage.getItem('selected-artists') || '[]'));
     setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
-    setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
+    setAmenities(
+      JSON.parse(localStorage.getItem('selected-amenities') || '{}') || {
+        1: 0, // Toilets
+        2: 0, // Food Vendors
+        3: 0, // Staff Members
+        4: 0, // Speakers
+        5: 0, // Parking
+        6: 0, // Security
+      }
+    );
     setEvents(JSON.parse(localStorage.getItem('saved-events') || '[]'));
     setAttendance(JSON.parse(localStorage.getItem('attendance') || '500000'));
     setTicketCategories(

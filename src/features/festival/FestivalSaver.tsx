@@ -42,8 +42,8 @@ export default function FestivalSaver() {
   2: 'Food Vendors',
   3: 'Staff Members',
   4: 'Speakers',
-  6: 'Parking',
-  7: 'Security',
+  5: 'Parking',
+  6: 'Security',
 };
 
   const exportToFile = (festival: any) => {
@@ -72,24 +72,31 @@ export default function FestivalSaver() {
     downloadAnchorNode.remove();
   };
 
-const loadFestival = (festival: Festival) => {
-  const defaultFestival = {
-    name: '',
-    artists: [],
-    stages: [],
-    amenities: {},
-    events: [],
+  const loadFestival = (festival: Festival) => {
+    const defaultFestival = {
+      name: '',
+      artists: [],
+      stages: [],
+      amenities: {
+        1: 0, // Toilets
+        2: 0, // Food Vendors
+        3: 0, // Staff Members
+        4: 0, // Speakers
+        5: 0, // Parking
+        6: 0, // Security
+      },
+      events: [],
+    };
+
+    const loadedFestival = { ...defaultFestival, ...festival };
+
+    localStorage.setItem('selected-artists', JSON.stringify(loadedFestival.artists));
+    localStorage.setItem('selected-stages', JSON.stringify(loadedFestival.stages));
+    localStorage.setItem('selected-amenities', JSON.stringify(loadedFestival.amenities));
+    localStorage.setItem('saved-events', JSON.stringify(loadedFestival.events));
+
+    setCurrentFestival(loadedFestival);
   };
-
-  const loadedFestival = { ...defaultFestival, ...festival };
-
-  localStorage.setItem('selected-artists', JSON.stringify(loadedFestival.artists));
-  localStorage.setItem('selected-stages', JSON.stringify(loadedFestival.stages));
-  localStorage.setItem('selected-amenities', JSON.stringify(loadedFestival.amenities));
-  localStorage.setItem('saved-events', JSON.stringify(loadedFestival.events));
-
-  setCurrentFestival(loadedFestival);
-};
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">

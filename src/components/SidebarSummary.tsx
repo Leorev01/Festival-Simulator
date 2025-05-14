@@ -51,6 +51,9 @@ export default function SidebarSummary() {
     toilets: Math.ceil(attendance / 75), // 1 toilet per 75 attendees
     foodVendors: Math.ceil(attendance / 250), // 1 food vendor per 250 attendees
     staff: Math.ceil(attendance / 100), // 1 staff member per 100 attendees
+    speakers: Math.ceil(attendance / 500), // 1 speaker per 500 attendees
+    parking: Math.ceil(attendance / 300), // 1 parking spot per 300 attendees
+    security: Math.ceil(attendance / 200), // 1 security staff per 200 attendees
   });
 
   const recommendedResources = calculateRecommendedResources();
@@ -61,10 +64,16 @@ export default function SidebarSummary() {
     const recommended =
       amenity.name === 'Toilets'
         ? recommendedResources.toilets
-        : amenity.name === 'Food Vendor'
+        : amenity.name === 'Food Vendors'
         ? recommendedResources.foodVendors
-        : amenity.name === 'Staff Member'
+        : amenity.name === 'Staff Members'
         ? recommendedResources.staff
+        : amenity.name === 'Speakers'
+        ? recommendedResources.speakers
+        : amenity.name === 'Parking'
+        ? recommendedResources.parking
+        : amenity.name === 'Security'
+        ? recommendedResources.security
         : 0;
 
     return {

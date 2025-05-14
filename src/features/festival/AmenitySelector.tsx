@@ -13,15 +13,16 @@ export default function AmenitySelector() {
     const suggested = {
       1: Math.ceil(attendance / 75), // Toilets
       2: Math.ceil(attendance / 250), // Food Vendors
-      3: Math.ceil(attendance / 100), // Staff
+      3: Math.ceil(attendance / 100), // Staff Members
       4: Math.ceil(attendance / 500), // Speakers
+      5: Math.ceil(attendance / 300), // Parking
+      6: Math.ceil(attendance / 200), // Security
     };
     setSelection((prev) => ({ ...prev, ...suggested }));
   };
 
   const handleAttendanceChange = (value: number) => {
     setAttendance(value);
-    // Removed updateAttendance as it is not defined in the FestivalContext
   };
 
   const totalCost = AMENITIES.reduce((sum, a) => (selection[a.id] || 0) * a.costPerUnit + sum, 0);

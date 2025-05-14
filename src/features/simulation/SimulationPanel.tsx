@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useFestival } from '../../context/FestivalContext';
 import RevenueTrendChart from '../../components/RevenueTrendCharts';
-import CrowdHealthScore from '../../components/CrowdHealthScore';
 import RealTimeSimulator from './RealTimeSimulator';
 
 export default function SimulationPanel() {
@@ -138,17 +137,6 @@ export default function SimulationPanel() {
         </div>
       </div>
 
-      {/* Crowd Health Section */}
-      <div>
-        <h3 className="text-xl font-bold text-gray-700">✅ Crowd Health Score</h3>
-        <CrowdHealthScore
-          attendance={realTimeMetrics.attendance}
-          toilets={amenities[1] || 0}
-          foodVendors={amenities[2] || 0}
-          staff={amenities[3] || 0}
-        />
-      </div>
-
       {/* Revenue Trend Section */}
       <div>
         <h3 className="text-xl font-bold text-gray-700">📈 Revenue Trend</h3>
@@ -158,6 +146,9 @@ export default function SimulationPanel() {
             toilets: amenities[1] || 0,
             foodVendors: amenities[2] || 0,
             staff: amenities[3] || 0,
+            speakers: amenities[4] || 0, // New
+            parking: amenities[5] || 0, // New
+            security: amenities[6] || 0, // New
           }}
           ticketRevenue={realTimeMetrics.ticketRevenue}
         />

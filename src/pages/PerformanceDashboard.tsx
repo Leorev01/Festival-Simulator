@@ -15,6 +15,8 @@ export default function PerformanceDashboard() {
 
   // Attendance and amenities
   const foodVendors = amenities[2] || 0;
+  const staff = amenities[3] || 0;
+  const speakers = amenities[4] || 0; // New
   const parkingSpots = amenities[5] || 0; // New
   const securityStaff = amenities[6] || 0; // New
 
@@ -40,14 +42,23 @@ export default function PerformanceDashboard() {
   const totalRevenue = ticketRevenue + vendorRevenue + parkingRevenue + securityRevenue;
 
   // Energy Usage Calculation
-  const totalEnergy = amenities[3] * 500; // Example: Energy usage per staff
+  const energyPerStaff = 500; // Energy usage per staff member
+  const energyPerSpeaker = 300; // Energy usage per speaker
+  const energyPerParkingSpot = 50; // Energy usage per parking spot
+  const energyPerSecurity = 100; // Energy usage per security staff
+
+  const totalEnergy =
+    staff * energyPerStaff +
+    speakers * energyPerSpeaker +
+    parkingSpots * energyPerParkingSpot +
+    securityStaff * energyPerSecurity;
 
   // Chart Data
   const chartData = [
     { name: 'Ticket Revenue', value: ticketRevenue },
     { name: 'Vendor Revenue', value: vendorRevenue },
-    { name: 'Parking Revenue', value: parkingRevenue }, // New
-    { name: 'Security Revenue', value: securityRevenue }, // New
+    { name: 'Parking Revenue', value: parkingRevenue },
+    { name: 'Security Revenue', value: securityRevenue },
     { name: 'Total Revenue', value: totalRevenue },
   ];
 

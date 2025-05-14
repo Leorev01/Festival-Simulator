@@ -8,6 +8,7 @@ import FestivalBuilder from './pages/FestivalBuilder';
 import CompareFestivals from './pages/CompareFestivals';
 import PerformanceDashboard from './pages/PerformanceDashboard';
 
+
 function App() {
 
   const [loading, setLoading] = useState(true);

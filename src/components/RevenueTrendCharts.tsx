@@ -2,7 +2,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 interface RevenueTrendChartProps {
   weather: 'Sunny' | 'Rainy' | 'Windy';
-  amenities: Record<number, number>;
+  amenities: {
+    toilets: number;
+    foodVendors: number;
+    staff: number;
+  };
 }
 
 const attendanceByDay = [150000, 160000, 140000]; // Example attendance data for 3 days
@@ -16,7 +20,7 @@ const weatherModifiers = {
 };
 
 export default function RevenueTrendChart({ weather, amenities }: RevenueTrendChartProps) {
-  const foodVendors = amenities[2] || 0;
+  const foodVendors = amenities.foodVendors || 0;
   const vendorMultiplier = weatherModifiers[weather]?.vendorMultiplier || 1.0;
 
   const data = attendanceByDay.map((attendance, i) => {

@@ -1,49 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useFestival } from '../context/FestivalContext';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import EnvironmentalImpactScore from '../components/EnvironmentalImpactScore';
-import CrowdHealthScore from '../components/CrowdHealthScore';
 
 export default function PerformanceDashboard() {
-  const [metrics, setMetrics] = useState({
-    attendance: 0,
-    ticketRevenue: 0,
-    vendorRevenue: 0,
-    totalRevenue: 0,
-    energyUsage: 0,
-  });
-  const [amenities, setAmenities] = useState<Record<number, number>>({});
-  const [attendance, setAttendance] = useState(5000);
+  const { amenities } = useFestival();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch metrics and amenities from localStorage
-    const storedMetrics = JSON.parse(localStorage.getItem('real-time-metrics') || '{}');
-    const storedAmenities = JSON.parse(localStorage.getItem('selected-amenities') || '{}');
-    setMetrics({
-      attendance: storedMetrics.attendance || 0,
-      ticketRevenue: storedMetrics.ticketRevenue || 0,
-      vendorRevenue: storedMetrics.vendorRevenue || 0,
-      totalRevenue: storedMetrics.totalRevenue || 0,
-      energyUsage: storedMetrics.energyUsage || 0,
-    });
-    setAmenities(storedAmenities);
-    setAttendance(Number(localStorage.getItem('expected-attendance')) || 5000);
-  }, []);
-
-  const calculateResourceRequirements = () => ({
-    toilets: Math.ceil(attendance / 75),
-    foodVendors: Math.ceil(attendance / 250),
-    staff: Math.ceil(attendance / 100),
-  });
-
-  const resourceRequirements = calculateResourceRequirements();
+  // Example: Calculate metrics based on amenities
+  const ticketRevenue = amenities[1] * 100; // Example calculation
+  const vendorRevenue = amenities[2] * 50; // Example calculation
+  const totalRevenue = ticketRevenue + vendorRevenue;
 
   const chartData = [
-    { name: 'Ticket Revenue', value: metrics.ticketRevenue },
-    { name: 'Vendor Revenue', value: metrics.vendorRevenue },
-    { name: 'Total Revenue', value: metrics.totalRevenue },
+    { name: 'Ticket Revenue', value: ticketRevenue },
+    { name: 'Vendor Revenue', value: vendorRevenue },
+    { name: 'Total Revenue', value: totalRevenue },
   ];
+
+  // Environmental Impact Calculation
+  const energyUsage = amenities[3] * 500; // Example: Energy usage per staff
+  const carbonFootprint = energyUsage * 0.5; // Example: Carbon footprint per kWh
+
+  // Crowd Health Calculation
+  const toilets = amenities[1] || 0;
+  const foodVendors = amenities[2] || 0;
+  const staff = amenities[3] || 0;
+  const attendance = 10000; // Example attendance
+  const crowdHealthScore = Math.min(
+    100,
+    Math.round((toilets * 10 + foodVendors * 5 + staff * 2) / (attendance / 100))
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 space-y-6">
@@ -53,56 +39,63 @@ export default function PerformanceDashboard() {
       {/* Revenue Breakdown */}
       <div className="bg-white p-6 rounded-xl shadow-lg">
         <h2 className="text-xl font-bold text-gray-700">💰 Revenue Breakdown</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="value" fill="#4ade80" name="Revenue ($)" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Resource Utilization */}
-      <div className="bg-white p-6 rounded-xl shadow-lg">
-        <h2 className="text-xl font-bold text-gray-700">🛠️ Resource Utilization</h2>
-        <ul className="space-y-2">
-          {['Toilets', 'Food Vendors', 'Staff'].map((resource, index) => {
-            const current = amenities[index + 1] || 0;
-            const required =
-              resource === 'Toilets'
-                ? resourceRequirements.toilets
-                : resource === 'Food Vendors'
-                ? resourceRequirements.foodVendors
-                : resourceRequirements.staff;
-
-            return (
-              <li key={resource} className="flex justify-between">
-                <span>{resource}:</span>
-                <span
-                  className={`font-medium ${
-                    current < required ? 'text-red-600' : current > required ? 'text-yellow-600' : 'text-green-600'
-                  }`}
-                >
-                  {current} / {required} ({current < required ? 'Shortage' : current > required ? 'Excess' : 'Optimal'})
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        {chartData.every((data) => data.value === 0) ? (
+          <p className="text-sm text-gray-500 mt-4">
+            No data available. Please configure the festival to generate metrics.
+          </p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#4ade80" name="Revenue ($)" />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Environmental Impact */}
-      <EnvironmentalImpactScore totalEnergy={metrics.energyUsage} />
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-bold text-gray-700">🌱 Environmental Impact</h2>
+        <p className="text-sm text-gray-600">
+          The festival's energy usage and carbon footprint are calculated based on the amenities and staff.
+        </p>
+        <ul className="list-disc list-inside text-gray-700 mt-4">
+          <li>
+            <strong>Energy Usage:</strong> {energyUsage.toLocaleString()} kWh
+          </li>
+          <li>
+            <strong>Carbon Footprint:</strong> {carbonFootprint.toFixed(2)} kg CO₂
+          </li>
+        </ul>
+      </div>
 
-      {/* Crowd Health Index */}
-      <CrowdHealthScore
-        attendance={metrics.attendance}
-        toilets={amenities[1] || 0}
-        foodVendors={amenities[2] || 0}
-        staff={amenities[3] || 0}
-      />
+      {/* Crowd Health */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-bold text-gray-700">✅ Crowd Health</h2>
+        <p className="text-sm text-gray-600">
+          The crowd health score is based on the number of toilets, food vendors, and staff relative to attendance.
+        </p>
+        <ul className="list-disc list-inside text-gray-700 mt-4">
+          <li>
+            <strong>Toilets:</strong> {toilets}
+          </li>
+          <li>
+            <strong>Food Vendors:</strong> {foodVendors}
+          </li>
+          <li>
+            <strong>Staff:</strong> {staff}
+          </li>
+          <li>
+            <strong>Attendance:</strong> {attendance.toLocaleString()}
+          </li>
+          <li>
+            <strong>Crowd Health Score:</strong> {crowdHealthScore} / 100
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

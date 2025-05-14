@@ -23,16 +23,6 @@ export default function SummaryPanel() {
   const totalCost = artistCost + stageCost + amenityCost;
   const totalEnergy = artistEnergy + stageEnergy + amenityEnergy;
 
-  // Calculate Popularity Score
-  const calculatePopularityScore = () => {
-    const artistPopularity = artists.length * 10; // Each artist adds 10 points
-    const stagePopularity = stages.reduce((sum, stage) => sum + stage.capacity / 1000, 0); // Larger stages add more points
-    const amenityPopularity = Object.values(amenities).reduce((sum, count) => sum + count * 5, 0); // Each amenity adds 5 points per unit
-    return Math.round(artistPopularity + stagePopularity + amenityPopularity);
-  };
-
-  const popularityScore = calculatePopularityScore();
-
   return (
     <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6 border border-gray-200">
       <h2 className="text-3xl font-extrabold text-indigo-700">📊 Festival Summary</h2>
@@ -52,13 +42,6 @@ export default function SummaryPanel() {
           <p className="text-sm text-gray-700">💸 Total Cost: <strong>${totalCost.toLocaleString()}</strong></p>
           <p className="text-sm text-gray-700">⚡ Total Energy Use: <strong>{totalEnergy} kWh</strong></p>
         </div>
-      </div>
-
-      {/* Popularity Score */}
-      <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl space-y-2">
-        <h3 className="text-md font-semibold text-yellow-800">🌟 Popularity Score</h3>
-        <p className="text-2xl font-bold text-yellow-600">{popularityScore} / 100</p>
-        <p className="text-sm text-gray-600">Based on artists, stages, and amenities.</p>
       </div>
 
       <p className="text-xs text-gray-500 text-center pt-2">Values calculated from your saved selections in localStorage.</p>

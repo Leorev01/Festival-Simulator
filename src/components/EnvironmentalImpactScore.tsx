@@ -10,6 +10,20 @@ const getImpactLabel = (kgCO2: number) => {
 
 export default function EnvironmentalImpactScore({ totalEnergy }: EnvironmentalImpactScoreProps) {
   const kgCO2 = totalEnergy * 0.4; // average 0.4 kg CO₂ per kWh
+
+  if (isNaN(kgCO2) || totalEnergy <= 0) {
+    return (
+      <div className="bg-white p-6 rounded-xl shadow-lg border mt-6 space-y-2">
+        <h3 className="text-xl font-bold text-indigo-700">🌍 Environmental Impact</h3>
+        <p className="text-3xl font-extrabold text-gray-500">Data Unavailable</p>
+        <p className="text-sm text-gray-500">
+          Unable to calculate environmental impact due to missing or invalid energy data.
+          Please ensure all stages and amenities are configured correctly.
+        </p>
+      </div>
+    );
+  }
+
   const { label, color } = getImpactLabel(kgCO2);
 
   return (

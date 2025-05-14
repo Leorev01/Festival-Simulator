@@ -9,7 +9,7 @@ import SimulationPanel from '../features/simulation/SimulationPanel';
 import SummaryPanel from '../features/festival/SummaryPanel';
 import FestivalSaver from '../features/festival/FestivalSaver';
 import SidebarSummary from '../components/SidebarSummary';
-import FestivalConfigurationPanel from '../features/festival/FestivalConfigurationPanel';
+import TicketPricing from '../components/TicketPricing';
 
 const tabs = ['Builder', 'Simulation', 'Summary'];
 
@@ -18,7 +18,7 @@ interface FestivalBuilderProps {
   onTicketCategoriesUpdate: (updatedCategories: any[]) => void; // Replace 'any[]' with the appropriate type if known
 }
 
-export default function FestivalBuilder({ ticketCategories, onTicketCategoriesUpdate }: FestivalBuilderProps) {
+export default function FestivalBuilder({ ticketCategories }: FestivalBuilderProps) {
   const [activeTab, setActiveTab] = useState('Builder');
   const navigate = useNavigate();
 
@@ -47,10 +47,10 @@ export default function FestivalBuilder({ ticketCategories, onTicketCategoriesUp
         >
           <div className="flex-1 space-y-12">
             <section>
-              <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎪 Ticket Categories</h2>
-              <p className="text-sm text-gray-500 mb-4">Set ticket prices and percentages for each category.</p>
-              <FestivalConfigurationPanel onTicketCategoriesUpdate={onTicketCategoriesUpdate} />
-            </section>
+                <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎪 Ticket Categories</h2>
+                <p className="text-sm text-gray-500 mb-4">Set ticket prices and percentages for each category.</p>
+                <TicketPricing />
+              </section>
             <section>
               <h2 className="text-2xl font-bold text-indigo-700 mb-2">🎤 Artist Selection</h2>
               <p className="text-sm text-gray-500 mb-4">Choose performers for your festival.</p>

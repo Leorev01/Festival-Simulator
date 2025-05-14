@@ -5,7 +5,7 @@ import { useFestival } from '../../context/FestivalContext';
 
 export default function AmenitySelector() {
   const { amenities: selection, setAmenities: setSelection } = useFestival();
-  const [attendance, setAttendance] = useState(500000);
+  const [attendance, setAttendance] = useState(500000); // Default attendance
 
   const handleChange = (id: number, value: number) => {
     setSelection((prev) => ({ ...prev, [id]: value }));
@@ -19,6 +19,11 @@ export default function AmenitySelector() {
       4: Math.ceil(attendance / 500), // Speakers
     };
     setSelection((prev) => ({ ...prev, ...suggested }));
+  };
+
+  const handleAttendanceChange = (value: number) => {
+    setAttendance(value);
+    // Removed updateAttendance as it is not defined in the FestivalContext
   };
 
   const totalCost = AMENITIES.reduce((sum, a) => (selection[a.id] || 0) * a.costPerUnit + sum, 0);
@@ -36,7 +41,7 @@ export default function AmenitySelector() {
           type="number"
           className="w-40 border p-2 rounded text-sm"
           value={attendance}
-          onChange={(e) => setAttendance(Number(e.target.value))}
+          onChange={(e) => handleAttendanceChange(Number(e.target.value))}
         />
         <p className="text-sm text-gray-600 mt-2">Click below to auto-fill recommended amenities:</p>
         <button

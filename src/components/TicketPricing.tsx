@@ -1,23 +1,19 @@
 import { useState } from 'react';
+import { useFestival } from '../context/FestivalContext';
 
 interface TicketCategory {
   name: string;
   price: number;
   percentage: number; // Percentage of attendees in this category
 }
-
-export default function TicketPricing({ onUpdate }: { onUpdate: (categories: TicketCategory[]) => void }) {
-  const [categories, setCategories] = useState<TicketCategory[]>([
-    { name: 'General Admission', price: 50, percentage: 70 },
-    { name: 'VIP', price: 150, percentage: 20 },
-    { name: 'Early Bird', price: 30, percentage: 10 },
-  ]);
+export default function TicketPricing() {
+  const { ticketCategories, setTicketCategories } = useFestival();
   const [error, setError] = useState<string | null>(null);
 
   const handleCategoryChange = (index: number, field: keyof TicketCategory, value: number | string) => {
-    const updatedCategories = [...categories];
+    const updatedCategories = [...ticketCategories];
     updatedCategories[index] = { ...updatedCategories[index], [field]: value };
-    setCategories(updatedCategories);
+    setTicketCategories(updatedCategories);
 
     // Validate total percentage
     const totalPercentage = updatedCategories.reduce((sum, category) => sum + category.percentage, 0);
@@ -26,17 +22,15 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
     } else {
       setError(null);
     }
-
-    onUpdate(updatedCategories);
   };
 
   const addCategory = () => {
-    setCategories([...categories, { name: 'New Category', price: 0, percentage: 0 }]);
+    setTicketCategories([...ticketCategories, { name: 'New Category', price: 0, percentage: 0 }]);
   };
 
   const removeCategory = (index: number) => {
-    const updatedCategories = categories.filter((_, i) => i !== index);
-    setCategories(updatedCategories);
+    const updatedCategories = ticketCategories.filter((_, i) => i !== index);
+    setTicketCategories(updatedCategories);
 
     // Validate total percentage after removal
     const totalPercentage = updatedCategories.reduce((sum, category) => sum + category.percentage, 0);
@@ -45,8 +39,6 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
     } else {
       setError(null);
     }
-
-    onUpdate(updatedCategories);
   };
 
   return (
@@ -56,7 +48,7 @@ export default function TicketPricing({ onUpdate }: { onUpdate: (categories: Tic
         Configure ticket categories, prices, and the percentage of attendees for each category.
       </p>
 
-      {categories.map((category, index) => (
+      {ticketCategories.map((category, index) => (
         <div key={index} className="grid grid-cols-4 gap-4 items-center border-b pb-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Category Name</label>

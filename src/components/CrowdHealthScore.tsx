@@ -37,7 +37,7 @@ export default function CrowdHealthScore({
   const score = calculateScore(attendance, toilets, foodVendors, staff);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border mt-6 space-y-2">
+    <div className="bg-white p-6 rounded-xl shadow-lg mt-6 space-y-2">
       <h3 className="text-xl font-bold text-indigo-700">🧠 Crowd Health Index</h3>
       <p className={`text-4xl font-extrabold ${getColor(score)}`}>{score}/100</p>
       <p className="text-sm text-gray-500">{getLabel(score)} — Based on crowd-to-resource ratios</p>

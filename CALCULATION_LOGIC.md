@@ -182,6 +182,10 @@ Displayed live to the user:
 
 ## 💾 Data Storage & Export
 
+### Why Login Without Registration?
+
+The app includes a simple login system to allow users to personalize their experience and save festival setups. However, since the app works entirely offline and uses localStorage for data storage, a registration system is not required. This design decision ensures simplicity and avoids the need for backend infrastructure.
+
 All user selections are saved in localStorage.
 
 Users can:

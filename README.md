@@ -52,7 +52,10 @@ festival-sim/
 ---
 
 ### 🧪 Features
-- 🧍 Local login with profile
+- 🧍 Local login with profile (no registration required):
+    - The app uses a simple login system to personalize the user experience.
+    - Since the app works entirely offline and stores data in localStorage, registration is not required.
+    - Users can save and load festival setups locally without needing an account.
 - 🎵 Select artists, stages, toilets, food vendors, staff, speakers, parking spots, and security staff
 - 🎟️ Configure ticket pricing and attendee distribution
 - 📊 Simulate crowd impact, resource needs, and revenue

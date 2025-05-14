@@ -17,16 +17,20 @@ This document outlines the real-world assumptions, formulas, and logic used to s
 
 ## 🎫 Ticket Revenue
 
+Ticket revenue is calculated based on the ticket categories and the percentage of attendees in each category.
+
 ```ts
-ticketRevenue = attendance * ticketPrice;
+ticketRevenue = categories.reduce((sum, category) => {
+  return sum + (attendance * (category.percentage / 100) * category.price);
+}, 0);
 ```
-ticketPrice is fixed at $100
-
-attendance is input by the user
-
----
+categories: Array of ticket categories with name, price, and percentage.
+attendance: Total number of attendees.
 
 ## 🍔 Vendor Revenue
+
+Vendor revenue is calculated based on the number of food vendors.
+
 
 ```ts
 vendorRevenue = foodVendors * 500;
@@ -40,6 +44,7 @@ Resource	    Requirement
 Toilets     	    1 per   75  attendees
 Food Vendors	    1 per   250 attendees
 Staff Members	    1 per   100 attendees
+Speakers            0 per   0 attendees
 ```
 These values are used in the simulation to determine whether your setup is under-resourced.
 
@@ -51,7 +56,7 @@ Each component contributes to total cost and energy usage.
 cost = artist.cost
 energy = artist.energy
 ```
-Each component contributes to total cost and energy usage.
+Each artist contributes to the total cost and energy usage.
 
 #### 🏟️ Stages
 ```ts
@@ -70,6 +75,22 @@ Amenity	        Cost/Unit	Energy/Unit
 Toilet	        $1,000	        10 kWh
 Food Vendor     $3,000          50 kWh
 Staff Member	$500	        5 kWh
+```
+
+#### 🌱 Environmental Impact
+The environmental impact is calculated based on energy usage and carbon footprint.
+```ts
+energyUsage = amenities.reduce((sum, amenity) => sum + (amenity.count * amenity.energyPerUnit), 0);
+carbonFootprint = energyUsage * 0.5; // Example: Carbon footprint per kWh
+```
+
+#### ✅ Crowd Health
+The crowd health score is calculated based on the number of toilets, food vendors, and staff relative to attendance.
+```ts
+crowdHealthScore = Math.min(
+  100,
+  Math.round((toilets * 10 + foodVendors * 5 + staff * 2) / (attendance / 100))
+);
 ```
 
 ### ⚠️ Overload Detection
@@ -101,7 +122,7 @@ Users can:
 
 - Save festival setups by name
 
--  Load previous setups
+- Load previous setups
 
 - Export setups to .json for external use or submission
 

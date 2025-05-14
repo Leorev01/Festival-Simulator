@@ -39,12 +39,9 @@ festival-sim/
 │   ├── components/         # Shared UI components
 |   ├── contexts/           # Context management
 │   ├── features/
-│   │   ├── auth/           # Login logic
 │   │   ├── festival/       # Artist, stage, amenity selection
 │   │   └── simulation/     # Simulation logic and panel
-│   ├── hooks/              # Custom React hooks
 │   ├── pages/              # Route-level pages
-│   ├── services/           # Data logic and handlers
 │   ├── utils/              # Calculation and persistence utils
 ├── README.md               # First readme containing information about the project
 ├── CALCULATION_LOGIC.md    # Second readme containing the logic for the calculations

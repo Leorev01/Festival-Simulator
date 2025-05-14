@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import { AMENITIES } from './amenities';
 import type { Amenity } from './types';
 import { useFestival } from '../../context/FestivalContext';
 
 export default function AmenitySelector() {
-  const { amenities: selection, setAmenities: setSelection } = useFestival();
-  const [attendance, setAttendance] = useState(500000); // Default attendance
+  const { amenities: selection, setAmenities: setSelection, attendance, setAttendance } = useFestival();
 
   const handleChange = (id: number, value: number) => {
     setSelection((prev) => ({ ...prev, [id]: value }));

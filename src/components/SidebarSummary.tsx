@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react';
-import type { Artist, Stage } from '../features/festival/types';
+import { useFestival } from '../context/FestivalContext';
 import { AMENITIES } from '../features/festival/amenities';
 
 export default function SidebarSummary() {
-  const [artists, setArtists] = useState<Artist[]>([]);
-  const [stages, setStages] = useState<Stage[]>([]);
-  const [amenities, setAmenities] = useState<Record<number, number>>({});
+  const { artists, stages, amenities, attendance } = useFestival();
   const [weather, setWeather] = useState<string>('Sunny'); // Current weather
-  const [attendance, setAttendance] = useState<number>(500000); // Expected attendance
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setArtists(JSON.parse(localStorage.getItem('selected-artists') || '[]'));
-      setStages(JSON.parse(localStorage.getItem('selected-stages') || '[]'));
-      setAmenities(JSON.parse(localStorage.getItem('selected-amenities') || '{}'));
       setWeather(localStorage.getItem('current-weather') || 'Sunny'); // Fetch current weather
-      setAttendance(Number(localStorage.getItem('expected-attendance')) || 500000); // Fetch expected attendance
     }, 500); // auto-refresh every 0.5s
     return () => clearInterval(interval);
   }, []);
